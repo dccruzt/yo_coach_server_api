@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
@@ -11,19 +12,6 @@ namespace YoCoachServer.Models
         public Schedule()
         {
             Clients = new List<Client>();
-        }
-
-        public enum StatePayment
-        {
-            PENDING,
-            PAYED
-        }
-
-        public enum StateSchedule
-        {
-            SCHEDULED,
-            CANCELED,
-            MISSED
         }
 
         public string Id { get; set; }
@@ -41,6 +29,7 @@ namespace YoCoachServer.Models
         public StateSchedule? ScheduleState { get; set; }
 
         public virtual Coach Coach { get; set; }
+        public virtual Gym Gym { get; set; }
         public virtual ICollection<Client> Clients { get; set; }
     }
 }

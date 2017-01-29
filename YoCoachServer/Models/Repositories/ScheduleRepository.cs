@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Helpers;
-using static YoCoachServer.Models.Schedule;
+using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models.Repositories
 {

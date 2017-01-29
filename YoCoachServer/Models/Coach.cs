@@ -20,5 +20,6 @@ namespace YoCoachServer.Models
 
         public virtual ApplicationUser User { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<Gym> Gyms { get; set; }
     }
 }

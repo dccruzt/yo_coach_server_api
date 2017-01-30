@@ -29,10 +29,10 @@ namespace YoCoachServer.Controllers
             return Ok(schedule);
         }
 
-        public IHttpActionResult ListCoachSchedules()
+        public IHttpActionResult ListCoachSchedules(ListCoachSchedulesBindingModel model)
         {
-            var schedules = ScheduleRepository.ListCoachSchedule("67dcb4ee-4397-42ac-b682-1a3c0d1c18b4", "2012-04-23T18:25:43.511Z");
-            return Ok();
+            var schedules = ScheduleRepository.ListCoachSchedule(model.CoachId, model.Date);
+            return Ok(schedules);
         }
     }
 }

@@ -16,9 +16,9 @@ namespace YoCoachServer.Models
 
         public string Id { get; set; }
         [JsonProperty("start_time")]
-        public string StartTime { get; set; }
+        public DateTimeOffset? StartTime { get; set; }
         [JsonProperty("end_time")]
-        public string EndTime { get; set; }
+        public DateTimeOffset? EndTime { get; set; }
         [JsonProperty("total_value")]
         public double? TotalValue { get; set; }
         [JsonProperty("is_confirmed")]

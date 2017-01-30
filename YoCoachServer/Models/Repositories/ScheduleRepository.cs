@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using YoCoachServer.Helpers;
 using YoCoachServer.Models.Enums;
+using YoCoachServer.Utils;
 
 namespace YoCoachServer.Models.Repositories
 {
@@ -41,7 +42,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static List<Schedule> ListCoachSchedule(string coachId, string date)
+        public static List<Schedule> ListCoachSchedule(string coachId, DateTimeOffset date)
         {
             try
             {
@@ -50,14 +51,19 @@ namespace YoCoachServer.Models.Repositories
                     var schedules = context.Schedule.Where(x => x.Coach.CoachId.Equals(coachId)).ToList();
                     if (schedules != null)
                     {
+                        var schedulesByDay = new List<Schedule>();
                         foreach (var schedule in schedules)
                         {
-                            DateTimeOffset dto = JsonConvert.DeserializeObject<DateTimeOffset>(schedule.StartTime);
-                            DateTime utc = dto.UtcDateTime;
-
+                            
+                            DateTimeOffset datea = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
+                            if (DateUtils.SameDate(datea, date))
+                            {
+                                schedulesByDay.Add(schedule);
+                            }
                         }
+                        return schedulesByDay;
                     }
-                    return null;
+                    return schedules;
                 }
             }
             catch (Exception ex)

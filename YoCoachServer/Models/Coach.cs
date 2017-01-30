@@ -10,6 +10,11 @@ namespace YoCoachServer.Models
 {
     public class Coach
     {
+        public Coach()
+        {
+            Schedules = new List<Schedule>();
+        }
+
         [Key, ForeignKey("User")]
         [JsonProperty("coach_id")]
         public string CoachId { get; set; }
@@ -21,5 +26,6 @@ namespace YoCoachServer.Models
         public virtual ApplicationUser User { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Gym> Gyms { get; set; }
+        public virtual ICollection<ClientCoach> ClientCoaches { get; set; }
     }
 }

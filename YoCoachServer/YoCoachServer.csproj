@@ -245,6 +245,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BindingModels\AccountBindingModels.cs" />
     <Compile Include="Models\BindingModels\ScheduleBindingModels.cs" />
+    <Compile Include="Models\ClientCoach.cs" />
     <Compile Include="Models\CreditPurchase.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
     <Compile Include="Models\Gym.cs" />
@@ -293,6 +294,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\DanielaCredentials.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

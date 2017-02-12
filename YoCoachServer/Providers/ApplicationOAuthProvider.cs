@@ -42,7 +42,7 @@ namespace YoCoachServer.Providers
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                 CookieAuthenticationDefaults.AuthenticationType);
 
-            AuthenticationProperties properties = CreateProperties(user.UserName, user.Type, user.Id);
+            AuthenticationProperties properties = CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -84,11 +84,15 @@ namespace YoCoachServer.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(string userName, string type, string id)
+        public static AuthenticationProperties CreateProperties(string id, string type, string userName, string name, string email)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
-                { "user_name", userName },{ "type", type },{ "user_id", id }
+                { "user_id", id },
+                { "type", type },
+                { "user_name", userName },
+                { "name", name },
+                { "email", (email == null) ? "" : email }
             };
             return new AuthenticationProperties(data);
         }

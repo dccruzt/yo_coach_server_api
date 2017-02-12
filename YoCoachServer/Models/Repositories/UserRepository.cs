@@ -11,18 +11,13 @@ namespace YoCoachServer.Models.Repositories
         {
             try
             {
-                using (var context = new YoCoachServerContext())
+                var coach = new Coach()
                 {
-                    var coach = new Coach()
-                    {
-                        //CoachId = user.Id,
-                        IsVisibleForClients = true,
-                        TimeToCancel = 0
-                    };
-                    //context.Coach.Add(coach);
-                    //context.SaveChanges();
-                    return coach;
-                }
+                    //CoachId = user.Id,
+                    IsVisibleForClients = true,
+                    TimeToCancel = 0
+                };
+                return coach;
             }
             catch (Exception ex)
             {
@@ -34,17 +29,12 @@ namespace YoCoachServer.Models.Repositories
         {
             try
             {
-                using (var context = new YoCoachServerContext())
+                var client = new Client()
                 {
-                    var client = new Client()
-                    {
-                        //ClientId = user.Id
+                    //ClientId = user.Id
 
-                    };
-                    //context.Client.Add(client);
-                    //context.SaveChanges();
-                    return client;
-                }
+                };
+                return client;
             }
             catch (Exception ex)
             {

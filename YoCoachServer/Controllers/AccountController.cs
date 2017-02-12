@@ -24,33 +24,32 @@ namespace YoCoachServer.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]
-    public class AccountController : ApiController
+    public class AccountController : BaseApiController
     {
         private const string LocalLoginProvider = "Local";
-        private ApplicationUserManager _userManager;
+        //private ApplicationUserManager _userManager;
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager,
-            ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
+        public AccountController(ApplicationUserManager userManager, ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
-            UserManager = userManager;
+            //UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
         }
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
+        //public ApplicationUserManager UserManager
+        //{
+        //    get
+        //    {
+        //        return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        //    }
+        //    private set
+        //    {
+        //        _userManager = value;
+        //    }
+        //}
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
@@ -267,7 +266,7 @@ namespace YoCoachServer.Controllers
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName, user.Type, user.Id);
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email);
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else
@@ -398,10 +397,10 @@ namespace YoCoachServer.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _userManager != null)
+            if (disposing && /*_userManager*/UserManager != null)
             {
-                _userManager.Dispose();
-                _userManager = null;
+                /*_userManager*/UserManager.Dispose();
+                //_userManager = null;
             }
 
             base.Dispose(disposing);

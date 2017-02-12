@@ -38,7 +38,7 @@ namespace YoCoachServer
                 TokenEndpointPath = new PathString("/login"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(30),
                 // In production mode set AllowInsecureHttp = false
                 AllowInsecureHttp = true
             };

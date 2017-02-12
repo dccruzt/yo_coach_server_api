@@ -7,32 +7,43 @@ namespace YoCoachServer.Models.Repositories
 {
     public class UserRepository
     {
-        public static void RegisterUser(ApplicationUser user)
+        public static Coach CreateUserCoach()
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    if (user.Type.Equals("CL"))
+                    var coach = new Coach()
                     {
-                        var client = new Client()
-                        {
-                            ClientId = user.Id
-                            
-                        };
-                        context.Client.Add(client);
-                    }
-                    if (user.Type.Equals("CO"))
+                        //CoachId = user.Id,
+                        IsVisibleForClients = true,
+                        TimeToCancel = 0
+                    };
+                    //context.Coach.Add(coach);
+                    //context.SaveChanges();
+                    return coach;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Client CreateUserClient()
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var client = new Client()
                     {
-                        var coach = new Coach()
-                        {
-                            CoachId = user.Id,
-                            IsVisibleForClients = true,
-                            TimeToCancel = 0
-                        };
-                        context.Coach.Add(coach);
-                    }
-                    context.SaveChanges();
+                        //ClientId = user.Id
+
+                    };
+                    //context.Client.Add(client);
+                    //context.SaveChanges();
+                    return client;
                 }
             }
             catch (Exception ex)

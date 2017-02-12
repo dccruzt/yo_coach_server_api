@@ -331,17 +331,35 @@ namespace YoCoachServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber, Name = model.Name, Type = model.Type };
 
+            Coach coach = null;
+            Client client = null;
+            
+            if (model.Type.Equals("CO"))
+            {
+                coach = UserRepository.CreateUserCoach();
+                
+            }
+            if (model.Type.Equals("CL"))
+            {
+                client = UserRepository.CreateUserClient();
+            }
+
+            var user = new ApplicationUser()
+            {
+                UserName = model.PhoneNumber,
+                PhoneNumber = model.PhoneNumber,
+                Name = model.Name,
+                Type = model.Type,
+                Coach = coach,
+                Client = client
+            };
+            
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
             }
-
-            //Create the user into the client or coach table
-            UserRepository.RegisterUser(user);
             return Ok();
         }
 

@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using YoCoachServer.Models;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
 
 namespace YoCoachServer.Controllers
 {
-    public class ScheduleController : ApiController
+    public class ScheduleController : BaseApiController
     {
         [Authorize]
         public IHttpActionResult SaveScheduleByCoach(SaveScheduleByCoachBindingModel model)
@@ -19,19 +22,24 @@ namespace YoCoachServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            var schedule = ScheduleRepository.SaveScheduleByCoach(model.CoachId, model.ClientId, model.Schedule);
-
-            if (schedule == null)
+            ApplicationUser user = CurrentUser;
+            if(user != null && user.Type.Equals("CO"))
             {
-                //return GetErrorResult(result);
+                var schedule = ScheduleRepository.SaveScheduleByCoach(user.Id, model.ClientId, model.Schedule);
+                return Ok(schedule);
             }
 
-            return Ok(schedule);
+            //if (schedule == null)
+            //{
+            //return GetErrorResult(result);
+            //}
+
+            return Ok();
         }
 
         public IHttpActionResult ListCoachSchedules(ListCoachSchedulesBindingModel model)
         {
-            var schedules = ScheduleRepository.ListCoachSchedule(model.CoachId, model.Date);
+            var schedules = ScheduleRepository.ListCoachSchedule("s", model.Date);
             return Ok(schedules);
         }
     }

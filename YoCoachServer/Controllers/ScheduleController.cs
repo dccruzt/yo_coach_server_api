@@ -12,35 +12,40 @@ using YoCoachServer.Models.Repositories;
 
 namespace YoCoachServer.Controllers
 {
+    [Authorize]
     public class ScheduleController : BaseApiController
     {
-        [Authorize]
         public IHttpActionResult SaveScheduleByCoach(SaveScheduleByCoachBindingModel model)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            ApplicationUser user = CurrentUser;
-            if(user != null && user.Type.Equals("CO"))
+            
+            if(CurrentUser != null && CurrentUser.Type.Equals("CO"))
             {
-                var schedule = ScheduleRepository.SaveScheduleByCoach(user.Id, model.ClientId, model.Schedule);
-                return Ok(schedule);
+                var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model.ClientId, model.Schedule);
+                if(schedule != null)
+                {
+                    return Ok(schedule);
+                }
             }
-
-            //if (schedule == null)
-            //{
-            //return GetErrorResult(result);
-            //}
-
-            return Ok();
+            return GetErrorResult(null);
         }
 
         public IHttpActionResult ListCoachSchedules(ListCoachSchedulesBindingModel model)
         {
-            var schedules = ScheduleRepository.ListCoachSchedule("s", model.Date);
-            return Ok(schedules);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+            {
+                var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model.Date);
+                return Ok(schedules);
+            }
+            return GetErrorResult(null);
         }
     }
 }

@@ -42,5 +42,25 @@ namespace YoCoachServer.Controllers
             }
             set { _currentUser = value; }
         }
+
+        public IHttpActionResult GetErrorResult(IdentityResult result)
+        {
+            if (result == null)
+            {
+                return InternalServerError();
+            }
+
+            if (!result.Succeeded)
+            {
+                if (result.Errors != null)
+                {
+                    foreach (string error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

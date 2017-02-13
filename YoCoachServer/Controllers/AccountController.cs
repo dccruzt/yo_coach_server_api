@@ -330,7 +330,6 @@ namespace YoCoachServer.Controllers
                 return BadRequest(ModelState);
             }
 
-
             Coach coach = null;
             Client client = null;
             

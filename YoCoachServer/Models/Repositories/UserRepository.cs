@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
 {
@@ -32,6 +33,33 @@ namespace YoCoachServer.Models.Repositories
                 var client = new Client()
                 {
                     //ClientId = user.Id
+
+                };
+                return client;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Client CreateUserClientByCoach(string coachId, RegisterClientBindingModel model)
+        {
+            try
+            {
+                var ClientCoachList = new List<ClientCoach>();
+                var clientCoach = new ClientCoach()
+                {
+                    CoachId = coachId,
+                    NickName = model.NickName,
+                    Code = model.Code,
+                    IsExpired = false
+                };
+                ClientCoachList.Add(clientCoach);
+
+                var client = new Client()
+                {
+                    ClientCoaches = ClientCoachList
 
                 };
                 return client;

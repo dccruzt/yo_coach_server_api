@@ -17,35 +17,49 @@ namespace YoCoachServer.Controllers
     {
         public IHttpActionResult SaveScheduleByCoach(SaveScheduleByCoachBindingModel model)
         {
-            if(!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
-            
-            if(CurrentUser != null && CurrentUser.Type.Equals("CO"))
-            {
-                var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model.ClientId, model.Schedule);
-                if(schedule != null)
+                if (!ModelState.IsValid)
                 {
-                    return Ok(schedule);
+                    return BadRequest(ModelState);
                 }
+
+                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                {
+                    var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model.ClientId, model.Schedule);
+                    if (schedule != null)
+                    {
+                        return Ok(schedule);
+                    }
+                }
+                return InternalServerError();
             }
-            return GetErrorResult(null);
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         public IHttpActionResult ListCoachSchedules(ListCoachSchedulesBindingModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
-            {
-                var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model.Date);
-                return Ok(schedules);
+                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                {
+                    var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model.Date);
+                    return Ok(schedules);
+                }
+                return InternalServerError();
             }
-            return GetErrorResult(null);
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
     }
 }

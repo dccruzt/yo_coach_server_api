@@ -10,17 +10,27 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        public static List<Client> ListClients(string coachId)
+        public static List<CoachClientBindingModel> ListClients(string coachId)
         {
             try
             {
-                using ( var context = new YoCoachServerContext())
+                using (var context = new YoCoachServerContext())
                 {
-                    var clients = context.ClientCoach.Where(x => x.CoachId.Equals(coachId))
-                        .Select(x => x.Client)
-                        .ToList();
-
-                    return clients;
+                    var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).ToList();
+                    var modelList = new List<CoachClientBindingModel>();
+                    if (clientCoaches != null)
+                    {
+                        foreach (var clientCoach in clientCoaches)
+                        {
+                            var model = new CoachClientBindingModel()
+                            {
+                                Id = clientCoach.ClientId,
+                                NickName = clientCoach.NickName
+                            };
+                            modelList.Add(model);
+                        }
+                    }
+                    return modelList;
                 }
             }
             catch (Exception ex)

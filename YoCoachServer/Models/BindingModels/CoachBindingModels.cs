@@ -23,5 +23,15 @@ namespace YoCoachServer.Models.BindingModels
             
             public bool IsExpired { get; set; }
         }
+
+        public class CoachClientBindingModel
+        {
+            [Required]
+            public string Id { get; set; }
+
+            [Required]
+            [JsonProperty("nick_name")]
+            public string NickName { get; set; }
+        }
     }
 }

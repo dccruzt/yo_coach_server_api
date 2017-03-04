@@ -10,22 +10,28 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        public static List<CoachClientBindingModel> ListClients(string coachId)
+        public static async Task<List<ClientBindingModel>> ListClients(string coachId, ApplicationUserManager userManager)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
                     var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).ToList();
-                    var modelList = new List<CoachClientBindingModel>();
+                    var modelList = new List<ClientBindingModel>();
                     if (clientCoaches != null)
                     {
                         foreach (var clientCoach in clientCoaches)
                         {
-                            var model = new CoachClientBindingModel()
+                            ApplicationUser userClient = await userManager.FindByIdAsync(clientCoach.ClientId);
+                            var model = new ClientBindingModel()
                             {
                                 Id = clientCoach.ClientId,
-                                NickName = clientCoach.NickName
+                                NickName = clientCoach.NickName,
+                                PhoneNumber = userClient.PhoneNumber,
+                                ClientType = clientCoach.ClientType,
+                                Picture = userClient.Picture,
+                                Age = userClient.Age,
+                                Email = userClient.Email
                             };
                             modelList.Add(model);
                         }
@@ -80,7 +86,8 @@ namespace YoCoachServer.Models.Repositories
                                 Client = client,
                                 NickName = model.NickName,
                                 Code = model.Code,
-                                IsExpired = false
+                                IsExpired = false,
+                                ClientType = model.ClientType
                             };
                             context.SaveChanges();
                         }

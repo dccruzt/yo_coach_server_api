@@ -53,14 +53,14 @@ namespace YoCoachServer.Models.Repositories
                     CoachId = coachId,
                     NickName = model.NickName,
                     Code = model.Code,
-                    IsExpired = false
+                    IsExpired = false,
+                    ClientType = model.ClientType
                 };
                 ClientCoachList.Add(clientCoach);
 
                 var client = new Client()
                 {
-                    ClientCoaches = ClientCoachList,
-                    ClientType = model.ClientType
+                    ClientCoaches = ClientCoachList
 
                 };
                 return client;

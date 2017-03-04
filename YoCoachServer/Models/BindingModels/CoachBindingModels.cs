@@ -29,7 +29,7 @@ namespace YoCoachServer.Models.BindingModels
             public bool IsExpired { get; set; }
         }
 
-        public class CoachClientBindingModel
+        public class ClientBindingModel
         {
             [Required]
             public string Id { get; set; }
@@ -37,6 +37,20 @@ namespace YoCoachServer.Models.BindingModels
             [Required]
             [JsonProperty("nick_name")]
             public string NickName { get; set; }
+
+            [Required]
+            [JsonProperty("phone_number")]
+            public string PhoneNumber { get; set; }
+
+            [Required]
+            [JsonProperty("client_type")]
+            public ClientType? ClientType { get; set; }
+
+            public byte[] Picture { get; set; }
+
+            public int? Age { get; set; }
+
+            public string Email { get; set; }
         }
 
         public class NewGymBindingModel

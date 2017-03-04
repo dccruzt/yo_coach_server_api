@@ -13,11 +13,11 @@ namespace YoCoachServer.Controllers
     [Authorize]
     public class CoachController : BaseApiController
     {
-        public IHttpActionResult ListClients()
+        public async Task<IHttpActionResult> ListClients()
         {
             try
             {
-                var clients = CoachRepository.ListClients(CurrentUser.Id);
+                var clients = await CoachRepository.ListClients(CurrentUser.Id, UserManager);
                 return Ok(clients);
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult SaveGym(NewGymBindingModel model)
+        public IHttpActionResult AddGym(NewGymBindingModel model)
         {
             try
             {

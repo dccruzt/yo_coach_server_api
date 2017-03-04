@@ -52,7 +52,12 @@ namespace YoCoachServer.Controllers
         {
             try
             {
-                return Ok();
+                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
+                {
+                    var gyms = GymRepository.ListGyms(CurrentUser.Id);
+                    return Ok(gyms);
+                }
+                return InternalServerError(null);
             }
             catch (Exception ex)
             {
@@ -64,7 +69,18 @@ namespace YoCoachServer.Controllers
         {
             try
             {
-                return Ok();
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
+                {
+                    GymRepository.AddGym(CurrentUser.Id, model);
+                    return Ok();
+                }
+                return InternalServerError(null);
+                
             }
             catch (Exception ex)
             {

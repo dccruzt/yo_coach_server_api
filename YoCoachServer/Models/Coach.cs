@@ -13,6 +13,7 @@ namespace YoCoachServer.Models
         public Coach()
         {
             Schedules = new List<Schedule>();
+            Gyms = new List<Gym>();
         }
 
         [Key, ForeignKey("User")]

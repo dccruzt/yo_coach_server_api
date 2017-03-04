@@ -9,18 +9,13 @@ namespace YoCoachServer.Models.Repositories
 {
     public class GymRepository
     {
-        public static List<Gym> ListGyms(int coachId)
+        public static List<Gym> ListGyms(string coachId)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var coach = context.Coach.Find(coachId);
-                    if(coach != null)
-                    {
-                        return coach.Gyms.ToList();
-                    }
-                    return null;
+                    return context.Gym.Where(x => x.Coach.CoachId.Equals(coachId)).ToList();
                 }
             }
             catch (Exception ex)
@@ -29,7 +24,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static void addGym(int coachId, NewGymBindingModel model)
+        public static void AddGym(string coachId, NewGymBindingModel model)
         {
             try
             {

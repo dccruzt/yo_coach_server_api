@@ -38,13 +38,27 @@ namespace YoCoachServer.Models.Repositories
                     var coach = context.Coach.Find(coachId);
                     if (coach != null)
                     {
+                        var creditPurchaseList = new List<CreditPurchase>();
+                        var creditPurchase = new CreditPurchase()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            UnitValue = model.CreditPurchase.UnitValue,
+                            PurchaseDate = model.CreditPurchase.PurchaseDate,
+                            TotalQuantity = model.CreditPurchase.TotalQuantity,
+                            ExpirationDate = model.CreditPurchase.ExpirationDate
+                        };
+                        creditPurchaseList.Add(creditPurchase);
+
                         var gym = new Gym()
                         {
                             Id = Guid.NewGuid().ToString(),
-                            CreditType = model.CreditType,
-                            Address = model.Address,
                             Name = model.Name,
+                            Address = model.Address,
+                            CreditType = model.CreditType,
+                            CreditPurchases = creditPurchaseList,
+                            Coach = coach
                         };
+                        context.SaveChanges();
                     }
                 }
             }

@@ -18,8 +18,8 @@ namespace YoCoachServer.Models
         public double? AvailableQuantity { get; set; }
         [JsonProperty("purchase_date")]
         public string PurchaseDate { get; set; }
-        [JsonProperty("expiration_date")]
-        public string ExpirationDate { get; set; }
+        [JsonProperty("expiration_days")]
+        public int? ExpirationDays { get; set; }
 
         public virtual Gym Gym { get; set; }
         public virtual ICollection<UseOfCredit> UseOfCredits { get; set; }

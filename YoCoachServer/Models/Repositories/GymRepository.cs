@@ -40,7 +40,7 @@ namespace YoCoachServer.Models.Repositories
                             UnitValue = model.CreditPurchase.UnitValue,
                             PurchaseDate = model.CreditPurchase.PurchaseDate,
                             TotalQuantity = model.CreditPurchase.TotalQuantity,
-                            ExpirationDate = model.CreditPurchase.ExpirationDate
+                            ExpirationDays = model.CreditPurchase.ExpirationDays
                         };
                         creditPurchaseList.Add(creditPurchase);
 
@@ -50,9 +50,9 @@ namespace YoCoachServer.Models.Repositories
                             Name = model.Name,
                             Address = model.Address,
                             CreditType = model.CreditType,
-                            CreditPurchases = creditPurchaseList,
-                            Coach = coach
+                            CreditPurchases = creditPurchaseList
                         };
+                        coach.Gyms.Add(gym);
                         context.SaveChanges();
                     }
                 }

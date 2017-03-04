@@ -56,11 +56,8 @@ namespace YoCoachServer.Models.BindingModels
         public class NewGymBindingModel
         {
             [Required]
-            [JsonProperty("nick_name")]
             public string Name { get; set; }
-
-            [Required]
-            [JsonProperty("nick_name")]
+            
             public string Address { get; set; }
 
             [Required]
@@ -86,8 +83,8 @@ namespace YoCoachServer.Models.BindingModels
             [JsonProperty("purchase_date")]
             public string PurchaseDate { get; set; }
 
-            [JsonProperty("expiration_date")]
-            public string ExpirationDate { get; set; }
+            [JsonProperty("expiration_days")]
+            public int? ExpirationDays { get; set; }
         }
     }
 }

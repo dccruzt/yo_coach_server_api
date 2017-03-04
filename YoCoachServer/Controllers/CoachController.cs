@@ -26,7 +26,7 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public async Task<IHttpActionResult> registerClient(RegisterClientBindingModel model)
+        public async Task<IHttpActionResult> RegisterClient(RegisterClientBindingModel model)
         {
             try
             {
@@ -37,10 +37,34 @@ namespace YoCoachServer.Controllers
                 
                 if(CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    await CoachRepository.registerClient(CurrentUser.Id, model, UserManager);
+                    await CoachRepository.RegisterClient(CurrentUser.Id, model, UserManager);
                     return Ok();
                 }
                 return InternalServerError(null);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult ListGyms()
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult SaveGym(NewGymBindingModel model)
+        {
+            try
+            {
+                return Ok();
             }
             catch (Exception ex)
             {

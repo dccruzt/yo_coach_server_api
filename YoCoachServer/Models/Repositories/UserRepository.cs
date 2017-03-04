@@ -59,7 +59,8 @@ namespace YoCoachServer.Models.Repositories
 
                 var client = new Client()
                 {
-                    ClientCoaches = ClientCoachList
+                    ClientCoaches = ClientCoachList,
+                    ClientType = model.ClientType
 
                 };
                 return client;

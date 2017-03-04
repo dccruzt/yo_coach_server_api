@@ -39,7 +39,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task registerClient(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
+        public async static Task RegisterClient(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
         {
             try
             {
@@ -71,16 +71,19 @@ namespace YoCoachServer.Models.Repositories
                     }//If the client exists just create a row clientcoach.
                     else
                     {
-                        var clientCoach = new ClientCoach()
+                        var oldClientCoach = context.ClientCoach.FirstOrDefault(x => x.CoachId.Equals(coachId) && x.ClientId.Equals(client.ClientId));
+                        if(oldClientCoach == null)
                         {
-                            CoachId = coachId,
-                            Client = client,
-                            NickName = model.NickName,
-                            Code = model.Code,
-                            IsExpired = false
-                        };
-                        context.ClientCoach.Add(clientCoach);
-                        context.SaveChanges();
+                            var clientCoach = new ClientCoach()
+                            {
+                                CoachId = coachId,
+                                Client = client,
+                                NickName = model.NickName,
+                                Code = model.Code,
+                                IsExpired = false
+                            };
+                            context.SaveChanges();
+                        }
                     }
                 }
             }

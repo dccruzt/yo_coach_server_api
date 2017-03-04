@@ -23,4 +23,10 @@ namespace YoCoachServer.Models.Enums
         PREPAGO,
         POSTPAGO
     }
+
+    public enum ClientType
+    {
+        MONTHLY,
+        LOOSE
+    }
 }

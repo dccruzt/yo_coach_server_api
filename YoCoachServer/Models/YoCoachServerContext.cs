@@ -15,6 +15,7 @@ namespace YoCoachServer.Models
         public virtual Coach Coach { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
+        public byte[] Picture { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
         {

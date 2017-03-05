@@ -89,14 +89,14 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult GetClientValues(GetValuesBindingModel model)
+        public IHttpActionResult FetchClientValues(GetValuesBindingModel model)
         {
             try
             {
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    ClientRepository.GetClientValues(CurrentUser.Id, model);
-                    return Ok();
+                    ValuesBindingModel valuesModel = ClientRepository.FetchClientValues(CurrentUser.Id, model);
+                    return Ok(valuesModel);
                 }
                 return InternalServerError(null);
             }

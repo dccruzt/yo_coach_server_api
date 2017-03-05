@@ -45,7 +45,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task RegisterClient(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
+        public async static Task<Client> RegisterClient(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
         {
             try
             {
@@ -94,6 +94,7 @@ namespace YoCoachServer.Models.Repositories
                             context.SaveChanges();
                         }
                     }
+                    return client;
                 }
             }
             catch (Exception ex)

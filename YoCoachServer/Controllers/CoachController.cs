@@ -38,8 +38,8 @@ namespace YoCoachServer.Controllers
                 
                 if(CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    await CoachRepository.RegisterClient(CurrentUser.Id, model, UserManager);
-                    return Ok();
+                    var client = await CoachRepository.RegisterClient(CurrentUser.Id, model, UserManager);
+                    return Ok(client);
                 }
                 return InternalServerError(null);
             }

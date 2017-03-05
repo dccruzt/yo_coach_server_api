@@ -66,7 +66,9 @@ namespace YoCoachServer.Models.Repositories
                         {
                             UserName = model.PhoneNumberClient,
                             PhoneNumber = model.PhoneNumberClient,
+                            Name = model.NickName,
                             Type = "CL",
+                            Age = model.Age,
                             Client = client
                         };
                         IdentityResult result = await userManager.CreateAsync(user, "password");

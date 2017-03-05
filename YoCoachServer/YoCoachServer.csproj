@@ -246,12 +246,14 @@
     <Compile Include="Helpers\MessageHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BindingModels\AccountBindingModels.cs" />
+    <Compile Include="Models\BindingModels\ClientBindingModels.cs" />
     <Compile Include="Models\BindingModels\CoachBindingModels.cs" />
     <Compile Include="Models\BindingModels\ScheduleBindingModels.cs" />
     <Compile Include="Models\ClientCoach.cs" />
     <Compile Include="Models\CreditPurchase.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
     <Compile Include="Models\Gym.cs" />
+    <Compile Include="Models\Repositories\ClientRepository.cs" />
     <Compile Include="Models\Repositories\CoachRepository.cs" />
     <Compile Include="Models\Repositories\GymRepository.cs" />
     <Compile Include="Models\Repositories\ScheduleRepository.cs" />

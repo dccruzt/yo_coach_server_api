@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
@@ -81,6 +82,23 @@ namespace YoCoachServer.Controllers
                 }
                 return InternalServerError(null);
                 
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult GetClientValues(GetValuesBindingModel model)
+        {
+            try
+            {
+                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
+                {
+                    ClientRepository.GetClientValues(CurrentUser.Id, model);
+                    return Ok();
+                }
+                return InternalServerError(null);
             }
             catch (Exception ex)
             {

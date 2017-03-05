@@ -27,6 +27,8 @@ namespace YoCoachServer.Models.BindingModels
             public string Code { get; set; }
             
             public bool IsExpired { get; set; }
+
+            public int? Age { get; set; }
         }
 
         public class ClientBindingModel

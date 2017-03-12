@@ -79,8 +79,8 @@ namespace YoCoachServer.Models.BindingModels
             public double? UnitValue { get; set; }
 
             [Required]
-            public double? Amount { get; set; }
-
+            [JsonProperty("expires_at")]
+            public string ExpiresAt { get; set; }
         }
     }
 }

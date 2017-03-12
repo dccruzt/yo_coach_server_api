@@ -36,7 +36,9 @@ namespace YoCoachServer.Models.Repositories
                         var credit = new Credit()
                         {
                             Id = Guid.NewGuid().ToString(),
-                            UnitValue = model.Credit.UnitValue
+                            CreditPolicy = model.Credit.CreditPolicy,
+                            UnitValue = model.Credit.UnitValue,
+                            ExpiresAt = model.Credit.ExpiresAt
                         };
 
                         var gym = new Gym()

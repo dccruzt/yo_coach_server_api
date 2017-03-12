@@ -7,7 +7,7 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
-    public class Gym
+    public class Gym : YoCoachObject
     {
         public string Id { get; set; }
         public string Name { get; set; }

@@ -86,11 +86,10 @@ namespace YoCoachServer.Models.Repositories
 
                         var invoice = new Invoice()
                         {
-                            Id = new Guid().ToString(),
+                            Id = Guid.NewGuid().ToString(),
                             CreatedAt = DateTime.Now.ToString(),
                             UpdateAt = DateTime.Now.ToString(),
-                            UnitExpent = model.UnitExpent,
-
+                            UnitExpent = model.UnitExpent
                         };
 
                         //var credit = context.Credit.FirstOrDefault(x => x.);
@@ -103,7 +102,6 @@ namespace YoCoachServer.Models.Repositories
                         {
                             schedule.Gym.Credit.Amount = model.UnitExpent;
                         }
-
                         context.SaveChanges();
                     }
                 }

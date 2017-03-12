@@ -9,6 +9,7 @@ using System.Web.Http;
 using YoCoachServer.Models;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
+using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Controllers
 {
@@ -59,6 +60,28 @@ namespace YoCoachServer.Controllers
             catch (Exception ex)
             {
                 return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult MarkScheduleAsCompleted(MarkScheduleBindingModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                if(CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                {
+                    ScheduleRepository.MarkScheduleAsCompleted(CurrentUser.Id, model);
+                    return Ok();
+                }
+                return InternalServerError();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+                throw;
             }
         }
     }

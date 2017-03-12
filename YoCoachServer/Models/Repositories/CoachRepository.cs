@@ -104,24 +104,5 @@ namespace YoCoachServer.Models.Repositories
                 throw;
             }
         }
-
-        public static void MarkScheduleAsCompleted(string coachId,MarkScheduleBindingModel model)
-        {
-            try
-            {
-                using (var context = new YoCoachServerContext())
-                {
-                    var schedule = context.Schedule.FirstOrDefault(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId));
-                    if(schedule != null)
-                    {
-                        schedule.ScheduleState = ScheduleState.COMPLETED;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
     }
 }

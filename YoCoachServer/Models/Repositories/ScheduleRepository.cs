@@ -6,6 +6,7 @@ using System.Web;
 using YoCoachServer.Helpers;
 using YoCoachServer.Models.Enums;
 using YoCoachServer.Utils;
+using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
 {
@@ -64,6 +65,45 @@ namespace YoCoachServer.Models.Repositories
                         return schedulesByDay;
                     }
                     return schedules;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static void MarkScheduleAsCompleted(string coachId, MarkScheduleBindingModel model)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var schedule = context.Schedule.FirstOrDefault(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId));
+                    if (schedule != null)
+                    {
+                        schedule.ScheduleState = ScheduleState.COMPLETED;
+
+                        var invoice = new Invoice()
+                        {
+                            Id = new Guid().ToString(),
+                            CreatedAt = DateTime.Now.ToString(),
+                            UpdateAt = DateTime.Now.ToString(),
+                            UnitExpent = model.UnitExpent,
+
+                        };
+
+                        if (schedule.Gym.Credit.Amount.HasValue)
+                        {
+                            schedule.Gym.Credit.Amount += model.UnitExpent;
+                        }
+                        else
+                        {
+                            schedule.Gym.Credit.Amount = model.UnitExpent;
+                        }
+
+                        context.SaveChanges();
+                    }
                 }
             }
             catch (Exception ex)

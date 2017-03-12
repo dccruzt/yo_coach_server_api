@@ -11,6 +11,10 @@ namespace YoCoachServer.Models
 {
     public class Credit
     {
+        public Credit()
+        {
+            Invoices = new List<Invoice>();
+        }
         public string Id { get; set; }
 
         [JsonProperty("credit_policy")]

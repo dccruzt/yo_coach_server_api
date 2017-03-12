@@ -63,7 +63,7 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult MarkScheduleAsCompleted(MarkScheduleBindingModel model)
+        public IHttpActionResult MarkScheduleAsCompleted(ScheduleDetailBindingModel model)
         {
             try
             {

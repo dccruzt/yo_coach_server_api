@@ -65,33 +65,22 @@ namespace YoCoachServer.Models.BindingModels
             public string Address { get; set; }
 
             [Required]
-            public NewCreditBindingModel Credit { get; set; }
+            public Credit Credit { get; set; }
         }
 
         public class NewCreditBindingModel
         {
             [Required]
-            [JsonProperty("credit_policy")]
-            public CreditPolicy? CreditPolicy { get; set; }
-
-            [Required]
-            [JsonProperty("unit_value")]
-            public double? UnitValue { get; set; }
-
-            [JsonProperty("expires_at")]
-            public string ExpiresAt { get; set; }
-
-            [JsonProperty("day_of_payment")]
-            public int? DayOfPayment { get; set; }
+            public Credit Credit { get; set; }
         }
 
-        public class MarkScheduleBindingModel
+        public class ScheduleDetailBindingModel
         {
             [JsonProperty("schedule_id")]
             public string ScheduleId { get; set; }
 
-            [JsonProperty("unit_expent")]
-            public double? UnitExpent { get; set; }
+            [JsonProperty("amount_expend")]
+            public double? AmountExpend { get; set; }
         }
     }
 }

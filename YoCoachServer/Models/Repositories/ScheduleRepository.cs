@@ -74,7 +74,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static void MarkScheduleAsCompleted(string coachId, MarkScheduleBindingModel model)
+        public static void MarkScheduleAsCompleted(string coachId, ScheduleDetailBindingModel model)
         {
             try
             {
@@ -83,27 +83,51 @@ namespace YoCoachServer.Models.Repositories
                     var schedule = context.Schedule.FirstOrDefault(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId));
                     if (schedule != null)
                     {
+                        //Change the schedule state
                         schedule.ScheduleState = ScheduleState.COMPLETED;
 
-                        var invoice = new Invoice()
+                        //Create Invoice for the credit of the gym
+                        var credit = context.Credit.FirstOrDefault(x => x.Id.Equals(schedule.Gym.Id));
+                        if(credit != null)
                         {
-                            Id = Guid.NewGuid().ToString(),
-                            CreatedAt = DateTime.Now.ToString(),
-                            UpdateAt = DateTime.Now.ToString(),
-                            UnitExpent = model.UnitExpent
-                        };
-
-                        //var credit = context.Credit.FirstOrDefault(x => x.);
-
-                        if (schedule.Gym.Credit.Amount.HasValue)
+                            var invoice = InvoiceRepository.createInvoiceForGym(model.AmountExpend.Value);
+                            credit.Invoices.Add(invoice);
+                        }
+                        //Increase the total credit amount
+                        if (credit.Amount.HasValue)
                         {
-                            schedule.Gym.Credit.Amount += model.UnitExpent;
+                            credit.Amount += model.AmountExpend;
                         }
                         else
                         {
-                            schedule.Gym.Credit.Amount = model.UnitExpent;
+                            credit.Amount = model.AmountExpend;
                         }
                         context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static void ReceivePayment(string coachId, ScheduleDetailBindingModel model)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var schedule = context.Schedule.Find(model.ScheduleId);
+                    if(schedule != null)
+                    {
+                        if(schedule.ClientDebit != null)
+                        {
+                            var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend.Value);
+                            schedule.ClientDebit.Balance.Invoices.Add(invoice);
+
+                            context.SaveChanges();
+                        }
                     }
                 }
             }

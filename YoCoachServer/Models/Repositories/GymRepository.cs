@@ -33,24 +33,18 @@ namespace YoCoachServer.Models.Repositories
                     var coach = context.Coach.Find(coachId);
                     if (coach != null)
                     {
-                        var creditPurchaseList = new List<CreditPurchase>();
-                        var creditPurchase = new CreditPurchase()
+                        var credit = new Credit()
                         {
                             Id = Guid.NewGuid().ToString(),
-                            UnitValue = model.CreditPurchase.UnitValue,
-                            PurchaseDate = model.CreditPurchase.PurchaseDate,
-                            TotalQuantity = model.CreditPurchase.TotalQuantity,
-                            ExpirationDays = model.CreditPurchase.ExpirationDays
+                            UnitValue = model.Credit.UnitValue
                         };
-                        creditPurchaseList.Add(creditPurchase);
 
                         var gym = new Gym()
                         {
                             Id = Guid.NewGuid().ToString(),
                             Name = model.Name,
                             Address = model.Address,
-                            CreditType = model.CreditType,
-                            CreditPurchases = creditPurchaseList
+                            Credit = credit
                         };
                         coach.Gyms.Add(gym);
                         context.SaveChanges();

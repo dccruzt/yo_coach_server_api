@@ -34,13 +34,16 @@ namespace YoCoachServer.Models.Repositories
                             }
                             if(schedule.Gym != null)
                             {
-                                if(schedule.Gym.CreditType.Equals(CreditType.PREPAGO))
+                                if(schedule.Gym.Credit != null)
                                 {
-                                    creditsPreQuantity += schedule.CreditsQuantity;
-                                }
-                                else if (schedule.Gym.CreditType.Equals(CreditType.POSTPAGO))
-                                {
-                                    creditsPostQuantity += schedule.CreditsQuantity;
+                                    if (schedule.Gym.Credit.CreditPolicy.Equals(CreditPolicy.PRE))
+                                    {
+                                        creditsPreQuantity += schedule.CreditsQuantity;
+                                    }
+                                    else if (schedule.Gym.Credit.CreditPolicy.Equals(CreditPolicy.POST))
+                                    {
+                                        creditsPostQuantity += schedule.CreditsQuantity;
+                                    }
                                 }
                             }
                         }

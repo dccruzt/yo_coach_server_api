@@ -18,10 +18,10 @@ namespace YoCoachServer.Models.Enums
         MISSED
     }
 
-    public enum CreditType
+    public enum CreditPolicy
     {
-        PREPAGO,
-        POSTPAGO
+        PRE,
+        POST
     }
 
     public enum ClientType

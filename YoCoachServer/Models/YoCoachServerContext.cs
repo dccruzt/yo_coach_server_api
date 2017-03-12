@@ -38,8 +38,8 @@ namespace YoCoachServer.Models
         public DbSet<Client> Client { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
         public DbSet<Gym> Gym { get; set; }
-        public DbSet<CreditPurchase> CreditPurchase { get; set; }
-        public DbSet<UseOfCredit> UseOfCredit { get; set; }
+        public DbSet<Credit> CreditPurchase { get; set; }
+        public DbSet<Invoice> Invoice { get; set; }
         public DbSet<ClientCoach> ClientCoach { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

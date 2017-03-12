@@ -67,6 +67,7 @@ namespace YoCoachServer.Models.Repositories
                             UserName = model.PhoneNumberClient,
                             PhoneNumber = model.PhoneNumberClient,
                             Name = model.NickName,
+                            Email = model.Email,
                             Type = "CL",
                             Age = model.Age,
                             Client = client

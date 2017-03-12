@@ -250,7 +250,7 @@
     <Compile Include="Models\BindingModels\CoachBindingModels.cs" />
     <Compile Include="Models\BindingModels\ScheduleBindingModels.cs" />
     <Compile Include="Models\ClientCoach.cs" />
-    <Compile Include="Models\CreditPurchase.cs" />
+    <Compile Include="Models\Credit.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
     <Compile Include="Models\Gym.cs" />
     <Compile Include="Models\Repositories\ClientRepository.cs" />
@@ -258,10 +258,11 @@
     <Compile Include="Models\Repositories\GymRepository.cs" />
     <Compile Include="Models\Repositories\ScheduleRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
-    <Compile Include="Models\UseOfCredit.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Coach.cs" />
+    <Compile Include="Models\YoCoachObject.cs" />
     <Compile Include="Models\YoCoachServerContext.cs" />
     <Compile Include="Models\Schedule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

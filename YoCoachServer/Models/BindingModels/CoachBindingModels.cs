@@ -24,6 +24,8 @@ namespace YoCoachServer.Models.BindingModels
             [JsonProperty("client_type")]
             public ClientType ClientType { get; set; }
 
+            public string Email { get; set; }
+
             public string Code { get; set; }
             
             public bool IsExpired { get; set; }
@@ -63,30 +65,22 @@ namespace YoCoachServer.Models.BindingModels
             public string Address { get; set; }
 
             [Required]
-            [JsonProperty("credit_type")]
-            public CreditType? CreditType { get; set; }
-
-            [Required]
-            [JsonProperty("credit_purchase")]
-            public NewCreditPurchaseBindingModel CreditPurchase { get; set; }
+            public NewCreditBindingModel Credit { get; set; }
         }
 
-        public class NewCreditPurchaseBindingModel
+        public class NewCreditBindingModel
         {
+            [Required]
+            [JsonProperty("credit_policy")]
+            public CreditPolicy? CreditPolicy { get; set; }
+
             [Required]
             [JsonProperty("unit_value")]
             public double? UnitValue { get; set; }
 
             [Required]
-            [JsonProperty("total_quantity")]
-            public double? TotalQuantity { get; set; }
+            public double? Amount { get; set; }
 
-            [Required]
-            [JsonProperty("purchase_date")]
-            public string PurchaseDate { get; set; }
-
-            [JsonProperty("expiration_days")]
-            public int? ExpirationDays { get; set; }
         }
     }
 }

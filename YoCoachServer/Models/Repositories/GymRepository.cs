@@ -29,7 +29,6 @@ namespace YoCoachServer.Models.Repositories
             try
             {
                 var credit = new Credit();
-                credit.Id = Guid.NewGuid().ToString();
                 credit.CreditPolicy = model.CreditPolicy;
                 credit.UnitValue = model.UnitValue;
                 

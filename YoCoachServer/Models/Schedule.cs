@@ -40,5 +40,6 @@ namespace YoCoachServer.Models
         public virtual Coach Coach { get; set; }
         public virtual Gym Gym { get; set; }
         public virtual ICollection<Client> Clients { get; set; }
+        public virtual ClientDebit ClientDebit { get; set; }
     }
 }

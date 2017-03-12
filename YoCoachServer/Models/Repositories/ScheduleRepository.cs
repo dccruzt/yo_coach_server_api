@@ -93,6 +93,8 @@ namespace YoCoachServer.Models.Repositories
 
                         };
 
+                        //var credit = context.Credit.FirstOrDefault(x => x.);
+
                         if (schedule.Gym.Credit.Amount.HasValue)
                         {
                             schedule.Gym.Credit.Amount += model.UnitExpent;

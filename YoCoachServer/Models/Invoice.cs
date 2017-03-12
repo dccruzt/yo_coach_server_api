@@ -13,5 +13,7 @@ namespace YoCoachServer.Models
         public string PaidAt { get; set; }
         [JsonProperty("unit_expent")]
         public double? UnitExpent { get; set; }
+
+        public virtual Credit Credit { get; set; }
     }
 }

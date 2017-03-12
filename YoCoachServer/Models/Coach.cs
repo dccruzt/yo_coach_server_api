@@ -23,6 +23,8 @@ namespace YoCoachServer.Models
         public int? TimeToCancel { get; set; }
         [JsonProperty("is_visible_for_clients")]
         public bool? IsVisibleForClients { get; set; }
+        [JsonProperty("has_penality")]
+        public bool? HasPenality { get; set; }
 
         public virtual ApplicationUser User { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }

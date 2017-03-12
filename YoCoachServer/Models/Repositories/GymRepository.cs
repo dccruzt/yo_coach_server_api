@@ -24,31 +24,6 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Credit CreateCredit(NewCreditBindingModel model)
-        {
-            try
-            {
-                var credit = new Credit();
-                credit.CreditPolicy = model.CreditPolicy;
-                credit.UnitValue = model.UnitValue;
-                
-                if (model.CreditPolicy.Equals(CreditPolicy.PRE))
-                {
-                    credit.ExpiresAt = model.ExpiresAt;
-                }
-                if (model.CreditPolicy.Equals(CreditPolicy.POST))
-                {
-                    credit.DayOfPayment = model.DayOfPayment;
-                }
-                return credit;
-
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
         public static Gym AddGym(string coachId, NewGymBindingModel model)
         {
             try
@@ -58,13 +33,14 @@ namespace YoCoachServer.Models.Repositories
                     var coach = context.Coach.Find(coachId);
                     if (coach != null)
                     {
-                        
+                        var credit = CreditRepository.createCreditForGym(model.Credit.CreditPolicy.Value, model.Credit.UnitValue.Value, model.Credit.ExpiresAt, model.Credit.DayOfPayment.Value);
+
                         var gym = new Gym()
                         {
                             Id = Guid.NewGuid().ToString(),
                             Name = model.Name,
                             Address = model.Address,
-                            Credit = CreateCredit(model.Credit)
+                            Credit = credit
                         };
                         coach.Gyms.Add(gym);
                         context.SaveChanges();

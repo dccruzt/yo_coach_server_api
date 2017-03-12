@@ -8,7 +8,7 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CreditRepository
     {
-        public static Credit createCreditForGym(CreditPolicy creditPolicy, double unitValue, DateTime expiresAt, int dayOfPayment)
+        public static Credit createCreditForGym(CreditPolicy creditPolicy, double unitValue, string expiresAt, int dayOfPayment)
         {
             try
             {
@@ -21,7 +21,7 @@ namespace YoCoachServer.Models.Repositories
 
                 if (creditPolicy.Equals(CreditPolicy.PRE))
                 {
-                    credit.ExpiresAt = expiresAt.ToString();
+                    credit.ExpiresAt = expiresAt;
                 }
                 if (creditPolicy.Equals(CreditPolicy.POST))
                 {
@@ -35,7 +35,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Credit createCreditForClientDebit(double unitValue, DateTime expiresAt, int dayOfPayment)
+        public static Credit createCreditForClientDebit()
         {
             try
             {
@@ -46,6 +46,24 @@ namespace YoCoachServer.Models.Repositories
                     UnitValue = 1
                 };
                 return credit;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static ClientDebit createClientDebit(Client client)
+        {
+            try
+            {
+                var clientDebit = new ClientDebit()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Balance = createCreditForClientDebit(),
+                    Client = client
+                };
+                return clientDebit;
             }
             catch (Exception ex)
             {

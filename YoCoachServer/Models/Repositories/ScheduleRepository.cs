@@ -26,6 +26,7 @@ namespace YoCoachServer.Models.Repositories
                         schedule.IsConfirmed = false;
                         schedule.PaymentState = StatePayment.PENDING;
                         schedule.ScheduleState = ScheduleState.SCHEDULED;
+                        schedule.ClientDebit = CreditRepository.createClientDebit(client);
                         schedule.Coach = coach;
                         schedule.Clients.Add(client);
                         context.Schedule.Add(schedule);

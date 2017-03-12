@@ -7,7 +7,7 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
-    public class Schedule
+    public class Schedule : YoCoachObject
     {
         public Schedule()
         {

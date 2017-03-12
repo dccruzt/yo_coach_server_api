@@ -26,5 +26,25 @@ namespace YoCoachServer.Models.Repositories
                 throw;
             }
         }
+
+        public static Invoice createInvoiceForClientDebit(double unitExpent, DateTime paidAt)
+        {
+            try
+            {
+                var invoice = new Invoice()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.Now.ToString(),
+                    UpdateAt = DateTime.Now.ToString(),
+                    UnitExpent = unitExpent,
+                    PaidAt = paidAt.ToString()
+                };
+                return invoice;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

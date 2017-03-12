@@ -88,7 +88,7 @@ namespace YoCoachServer.Providers
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
-                { "user_id", id },
+                { "id", id },
                 { "type", type },
                 { "user_name", userName },
                 { "name", name },

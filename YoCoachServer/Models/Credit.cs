@@ -17,7 +17,9 @@ namespace YoCoachServer.Models
         public double? Amount { get; set; }
         [JsonProperty("expires_at")]
         public string ExpiresAt { get; set; }
-        
+        [JsonProperty("day_of_payment")]
+        public int? DayOfPayment { get; set; }
+
         public virtual ICollection<Invoice> Invoices { get; set; }
     }
 }

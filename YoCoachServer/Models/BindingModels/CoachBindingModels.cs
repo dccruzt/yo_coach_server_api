@@ -78,9 +78,19 @@ namespace YoCoachServer.Models.BindingModels
             [JsonProperty("unit_value")]
             public double? UnitValue { get; set; }
 
-            [Required]
             [JsonProperty("expires_at")]
             public string ExpiresAt { get; set; }
+
+            [JsonProperty("day_of_payment")]
+            public int? DayOfPayment { get; set; }
+        }
+
+        public class MarkScheduleBindingModel
+        {
+            [JsonProperty("schedule_id")]
+            public string ScheduleId { get; set; }
+
+            public double? Amount { get; set; }
         }
     }
 }

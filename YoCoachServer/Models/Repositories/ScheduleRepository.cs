@@ -24,7 +24,7 @@ namespace YoCoachServer.Models.Repositories
                         schedule.Id = Guid.NewGuid().ToString();
                         schedule.IsConfirmed = false;
                         schedule.PaymentState = StatePayment.PENDING;
-                        schedule.ScheduleState = StateSchedule.SCHEDULED;
+                        schedule.ScheduleState = ScheduleState.SCHEDULED;
                         schedule.Coach = coach;
                         schedule.Clients.Add(client);
                         context.Schedule.Add(schedule);

@@ -11,11 +11,12 @@ namespace YoCoachServer.Models.Enums
         PAYED
     }
 
-    public enum StateSchedule
+    public enum ScheduleState
     {
         SCHEDULED,
         CANCELED,
-        MISSED
+        MISSED,
+        COMPLETED
     }
 
     public enum CreditPolicy

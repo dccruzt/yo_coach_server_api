@@ -32,7 +32,7 @@ namespace YoCoachServer.Models
         public StatePayment? PaymentState { get; set; }
 
         [JsonProperty("schedule_state")]
-        public StateSchedule? ScheduleState { get; set; }
+        public ScheduleState? ScheduleState { get; set; }
 
         [JsonProperty("credits_quantity")]
         public double? CreditsQuantity { get; set; }

@@ -77,8 +77,11 @@ namespace YoCoachServer.Controllers
 
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    GymRepository.AddGym(CurrentUser.Id, model);
-                    return Ok();
+                    var gym = GymRepository.AddGym(CurrentUser.Id, model);
+                    if(gym != null)
+                    {
+                        return Ok(gym);
+                    }
                 }
                 return InternalServerError(null);
                 

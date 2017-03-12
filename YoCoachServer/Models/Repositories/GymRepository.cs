@@ -24,7 +24,33 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static void AddGym(string coachId, NewGymBindingModel model)
+        public static Credit CreateCredit(NewCreditBindingModel model)
+        {
+            try
+            {
+                var credit = new Credit();
+                credit.Id = Guid.NewGuid().ToString();
+                credit.CreditPolicy = model.CreditPolicy;
+                credit.UnitValue = model.UnitValue;
+                
+                if (model.CreditPolicy.Equals(CreditPolicy.PRE))
+                {
+                    credit.ExpiresAt = model.ExpiresAt;
+                }
+                if (model.CreditPolicy.Equals(CreditPolicy.POST))
+                {
+                    credit.DayOfPayment = model.DayOfPayment;
+                }
+                return credit;
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Gym AddGym(string coachId, NewGymBindingModel model)
         {
             try
             {
@@ -33,24 +59,20 @@ namespace YoCoachServer.Models.Repositories
                     var coach = context.Coach.Find(coachId);
                     if (coach != null)
                     {
-                        var credit = new Credit()
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            CreditPolicy = model.Credit.CreditPolicy,
-                            UnitValue = model.Credit.UnitValue,
-                            ExpiresAt = model.Credit.ExpiresAt
-                        };
-
+                        
                         var gym = new Gym()
                         {
                             Id = Guid.NewGuid().ToString(),
                             Name = model.Name,
                             Address = model.Address,
-                            Credit = credit
+                            Credit = CreateCredit(model.Credit)
                         };
                         coach.Gyms.Add(gym);
                         context.SaveChanges();
+                        gym.Coach = null;
+                        return gym;
                     }
+                    return null;
                 }
             }
             catch (Exception ex)

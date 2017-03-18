@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using YoCoachServer.Models;
@@ -25,9 +26,11 @@ namespace YoCoachServer.Controllers
                     return BadRequest(ModelState);
                 }
 
+                //ApplicationUser current = await UserManager.FindByNameAsync(Thread.CurrentPrincipal.Identity.Name);
+
                 if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
                 {
-                    var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model.ClientId, model.Schedule);
+                    var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model);
                     if (schedule != null)
                     {
                         return Ok(schedule);

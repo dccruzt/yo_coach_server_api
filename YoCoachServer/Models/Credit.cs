@@ -15,6 +15,7 @@ namespace YoCoachServer.Models
         {
             Invoices = new List<Invoice>();
         }
+        [Key, ForeignKey("Gym")]
         public string Id { get; set; }
 
         [JsonProperty("credit_policy")]

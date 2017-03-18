@@ -22,7 +22,6 @@ namespace YoCoachServer.Models.BindingModels
 
     public class ListCoachSchedulesBindingModel
     {
-
         [Required]
         public DateTimeOffset Date { get; set; }
     }

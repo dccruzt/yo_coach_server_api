@@ -47,8 +47,8 @@ namespace YoCoachServer.Models
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-            modelBuilder.Entity<Credit>().HasRequired(m => m.Gym).WithOptional(m => m.Credit);
-            modelBuilder.Entity<ClientDebit>().HasRequired(m => m.Schedule).WithOptional(m => m.ClientDebit);
+            //modelBuilder.Entity<Credit>().HasRequired(m => m.Gym).WithOptional(m => m.Credit);
+            //modelBuilder.Entity<ClientDebit>().HasRequired(m => m.Schedule).WithOptional(m => m.ClientDebit);
         }
 
         public static YoCoachServerContext Create()

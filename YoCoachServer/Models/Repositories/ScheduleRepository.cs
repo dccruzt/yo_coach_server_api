@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Helpers;
+using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Enums;
 using YoCoachServer.Utils;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;
@@ -12,21 +13,22 @@ namespace YoCoachServer.Models.Repositories
 {
     public class ScheduleRepository
     {
-        public static Schedule SaveScheduleByCoach(string coachId, string clientId, Schedule schedule)
+        public static Schedule SaveScheduleByCoach(string coachId, SaveScheduleByCoachBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
                     var coach = context.Coach.Find(coachId);
-                    var client = context.Client.Find(clientId);
+                    var client = context.Client.Find(model.ClientId);
                     if (coach != null && client != null)
                     {
+                        var schedule = model.Schedule;
                         schedule.Id = Guid.NewGuid().ToString();
                         schedule.IsConfirmed = false;
                         schedule.PaymentState = StatePayment.PENDING;
                         schedule.ScheduleState = ScheduleState.SCHEDULED;
-                        schedule.ClientDebit = CreditRepository.createClientDebit(client);
+                        //schedule.ClientDebit = CreditRepository.createClientDebit(client);
                         schedule.Coach = coach;
                         schedule.Clients.Add(client);
                         context.Schedule.Add(schedule);

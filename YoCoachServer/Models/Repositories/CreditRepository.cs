@@ -43,7 +43,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 var credit = new Credit()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    //Id = Guid.NewGuid().ToString(),
                     CreditPolicy = CreditPolicy.POST,
                     UnitValue = 1
                 };
@@ -55,7 +55,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static ClientDebit createClientDebit(Client client)
+        public static ClientDebit createClientDebit(string scheduleId, Client client)
         {
             try
             {

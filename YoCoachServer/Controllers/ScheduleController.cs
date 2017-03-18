@@ -84,5 +84,27 @@ namespace YoCoachServer.Controllers
                 throw;
             }
         }
+
+        public IHttpActionResult ReceivePayment(ScheduleDetailBindingModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                {
+                    ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
+                    return Ok();
+                }
+                return InternalServerError();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+                throw;
+            }
+        }
     }
 }

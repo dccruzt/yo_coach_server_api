@@ -33,7 +33,7 @@ namespace YoCoachServer.Models.Repositories
                     var coach = context.Coach.Find(coachId);
                     if (coach != null)
                     {
-                        var credit = CreditRepository.createCreditForGym(model.Credit.CreditPolicy.Value, model.Credit.UnitValue.Value, model.Credit.ExpiresAt, model.Credit.DayOfPayment.Value);
+                        var credit = CreditRepository.createCreditForGym(model);
 
                         var gym = new Gym()
                         {

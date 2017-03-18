@@ -3,29 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Models.Enums;
+using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
 {
     public class CreditRepository
     {
-        public static Credit createCreditForGym(CreditPolicy creditPolicy, double unitValue, string expiresAt, int dayOfPayment)
+        public static Credit createCreditForGym(NewGymBindingModel model)
         {
             try
             {
+                //
                 var credit = new Credit()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    CreditPolicy = creditPolicy,
-                    UnitValue = unitValue
+                    CreditPolicy = model.Credit.CreditPolicy,
+                    UnitValue = model.Credit.UnitValue
                 };
 
-                if (creditPolicy.Equals(CreditPolicy.PRE))
+                if (model.Credit.CreditPolicy.Equals(CreditPolicy.PRE))
                 {
-                    credit.ExpiresAt = expiresAt;
+                    credit.ExpiresAt = model.Credit.ExpiresAt;
                 }
-                if (creditPolicy.Equals(CreditPolicy.POST))
+                if (model.Credit.CreditPolicy.Equals(CreditPolicy.POST))
                 {
-                    credit.DayOfPayment = dayOfPayment;
+                    credit.DayOfPayment = model.Credit.DayOfPayment;
                 }
                 return credit;
             }

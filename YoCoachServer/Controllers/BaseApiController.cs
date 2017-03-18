@@ -38,6 +38,7 @@ namespace YoCoachServer.Controllers
                     return _currentUser;
                 }
                 _currentUser = UserManager.FindByName(Thread.CurrentPrincipal.Identity.Name);
+                //UserManagerFactory = () => new UserManager<IdentityUser>(new UserStore<IdentityUser>(new MyDbContext()));
                 return _currentUser;
             }
             set { _currentUser = value; }

@@ -10,7 +10,7 @@ namespace YoCoachServer.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "YoCoach - Home";
 
             return View();
         }

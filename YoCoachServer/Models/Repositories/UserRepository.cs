@@ -43,7 +43,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Client CreateUserClientByCoach(string coachId, RegisterClientBindingModel model)
+        public static Client CreateUserClientByCoach(string coachId, RegisterClientBindingModel model, string code)
         {
             try
             {
@@ -62,6 +62,9 @@ namespace YoCoachServer.Models.Repositories
                 {
                     CreatedAt = DateTimeOffset.Now,
                     UpdateAt = DateTimeOffset.Now,
+                    AllowLoginWithCode = true,
+                    CodeToAccess = code,
+                    CodeCreatedAt = DateTimeOffset.Now,
                     ClientCoaches = ClientCoachList
 
                 };

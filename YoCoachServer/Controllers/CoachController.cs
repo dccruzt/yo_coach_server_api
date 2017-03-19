@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using YoCoachServer.Helpers;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;

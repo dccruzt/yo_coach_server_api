@@ -5,7 +5,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using YoCoachServer.Helpers;
 using YoCoachServer.Models.Enums;
+using YoCoachServer.Utils;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
@@ -69,7 +71,8 @@ namespace YoCoachServer.Models.Repositories
                     //if the client doesnt exist, register into the aspnetusers table
                     if(client == null)
                     {
-                        client = UserRepository.CreateUserClientByCoach(coachId, model);
+                        var code = StringUtils.GenerateCode();
+                        client = UserRepository.CreateUserClientByCoach(coachId, model, code);
                         var user = new ApplicationUser()
                         {
                             UserName = model.PhoneNumber,
@@ -80,10 +83,10 @@ namespace YoCoachServer.Models.Repositories
                             Age = model.Age,
                             Client = client
                         };
-                        IdentityResult result = await userManager.CreateAsync(user, "password");
-                        if (!result.Succeeded)
+                        IdentityResult result = await userManager.CreateAsync(user, code);
+                        if (result.Succeeded)
                         {
-                            
+                            await SMSHelper.sendSms(model.PhoneNumber, code);
                         }
                     }//If the client exists just create a row clientcoach.
                     else

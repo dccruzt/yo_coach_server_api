@@ -9,7 +9,7 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
-    public class Client
+    public class Client : YoCoachObject
     {
         public Client()
         {

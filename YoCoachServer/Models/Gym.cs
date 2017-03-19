@@ -15,5 +15,6 @@ namespace YoCoachServer.Models
 
         public virtual Coach Coach { get; set; }
         public virtual Credit Credit { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

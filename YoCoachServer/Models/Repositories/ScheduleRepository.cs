@@ -21,6 +21,7 @@ namespace YoCoachServer.Models.Repositories
                 {
                     var coach = context.Coach.Find(coachId);
                     var client = context.Client.Find(model.ClientId);
+                    var gym = context.Gym.Find(model.GymId);
                     if (coach != null && client != null)
                     {
                         var schedule = model.Schedule;
@@ -28,9 +29,12 @@ namespace YoCoachServer.Models.Repositories
                         schedule.IsConfirmed = false;
                         schedule.PaymentState = StatePayment.PENDING;
                         schedule.ScheduleState = ScheduleState.SCHEDULED;
+                        schedule.CreatedAt = DateTimeOffset.Now;
+                        schedule.UpdateAt = DateTimeOffset.Now;
                         //schedule.ClientDebit = CreditRepository.createClientDebit(client);
                         schedule.Coach = coach;
                         schedule.Clients.Add(client);
+                        schedule.Gym = gym;
                         context.Schedule.Add(schedule);
 
                         context.SaveChanges();
@@ -87,6 +91,9 @@ namespace YoCoachServer.Models.Repositories
                     {
                         //Change the schedule state
                         schedule.ScheduleState = ScheduleState.COMPLETED;
+
+                        //Verify if the schedule has gym
+                        var gym = context.Gym.ToList().Select(x => x.Schedules);
 
                         //Create Invoice for the credit of the gym
                         var credit = context.Credit.FirstOrDefault(x => x.Id.Equals(schedule.Gym.Id));

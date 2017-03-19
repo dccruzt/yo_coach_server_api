@@ -40,7 +40,9 @@ namespace YoCoachServer.Models.Repositories
                             Id = Guid.NewGuid().ToString(),
                             Name = model.Name,
                             Address = model.Address,
-                            Credit = credit
+                            Credit = credit,
+                            CreatedAt = DateTimeOffset.Now,
+                            UpdateAt = DateTimeOffset.Now
                         };
                         coach.Gyms.Add(gym);
                         context.SaveChanges();

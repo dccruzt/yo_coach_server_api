@@ -54,19 +54,19 @@ namespace YoCoachServer.Models.Repositories
                 {
                     //Check if the user exists
                     Client client = null;
-                    ApplicationUser userClient = await userManager.FindByNameAsync(model.PhoneNumberClient);
+                    ApplicationUser userClient = await userManager.FindByNameAsync(model.PhoneNumber);
                     if(userClient != null)
                     {
                         client = context.Client.Find(userClient.Id);
                     }
-                    //if the client doesnt exist register into the aspnetusers table
+                    //if the client doesnt exist, register into the aspnetusers table
                     if(client == null)
                     {
                         client = UserRepository.CreateUserClientByCoach(coachId, model);
                         var user = new ApplicationUser()
                         {
-                            UserName = model.PhoneNumberClient,
-                            PhoneNumber = model.PhoneNumberClient,
+                            UserName = model.PhoneNumber,
+                            PhoneNumber = model.PhoneNumber,
                             Name = model.NickName,
                             Email = model.Email,
                             Type = "CL",

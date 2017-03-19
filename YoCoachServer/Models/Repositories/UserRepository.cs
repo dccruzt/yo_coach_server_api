@@ -60,6 +60,8 @@ namespace YoCoachServer.Models.Repositories
 
                 var client = new Client()
                 {
+                    CreatedAt = DateTimeOffset.Now,
+                    UpdateAt = DateTimeOffset.Now,
                     ClientCoaches = ClientCoachList
 
                 };

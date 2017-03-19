@@ -9,8 +9,8 @@ namespace YoCoachServer.Models
     public class YoCoachObject
     {
         [JsonProperty("created_at")]
-        public string CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
         [JsonProperty("update_at")]
-        public string UpdateAt { get; set; }
+        public DateTimeOffset? UpdateAt { get; set; }
     }
 }

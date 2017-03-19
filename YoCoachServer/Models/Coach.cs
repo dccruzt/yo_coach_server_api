@@ -8,7 +8,7 @@ using System.Web;
 
 namespace YoCoachServer.Models
 {
-    public class Coach
+    public class Coach : YoCoachObject
     {
         public Coach()
         {

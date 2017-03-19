@@ -13,8 +13,8 @@ namespace YoCoachServer.Models.BindingModels
         public class RegisterClientBindingModel
         {
             [Required]
-            [JsonProperty("phone_number_client")]
-            public string PhoneNumberClient { get; set; }
+            [JsonProperty("phone_number")]
+            public string PhoneNumber { get; set; }
 
             [Required]
             [JsonProperty("nick_name")]

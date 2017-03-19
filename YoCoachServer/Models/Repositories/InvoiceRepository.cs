@@ -15,8 +15,8 @@ namespace YoCoachServer.Models.Repositories
                 var invoice = new Invoice()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    CreatedAt = DateTime.Now.ToString(),
-                    UpdateAt = DateTime.Now.ToString(),
+                    CreatedAt = DateTimeOffset.Now,
+                    UpdateAt = DateTimeOffset.Now,
                     AmountExpend = amountExpend
                 };
                 return invoice;
@@ -34,8 +34,8 @@ namespace YoCoachServer.Models.Repositories
                 var invoice = new Invoice()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    CreatedAt = DateTime.Now.ToString(),
-                    UpdateAt = DateTime.Now.ToString(),
+                    CreatedAt = DateTimeOffset.Now,
+                    UpdateAt = DateTimeOffset.Now,
                     AmountExpend = amountExpend,
                     PaidAt = DateTime.Now.ToString()
                 };

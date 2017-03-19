@@ -101,8 +101,11 @@ namespace YoCoachServer.Controllers
                 }
                 if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
                 {
-                    ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
-                    return Ok();
+                    var schedule = ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
+                    if(schedule != null)
+                    {
+                        return Ok(schedule);
+                    }
                 }
                 return InternalServerError();
             }

@@ -61,7 +61,6 @@ namespace YoCoachServer.Models.Repositories
             {
                 var clientDebit = new ClientDebit()
                 {
-                    Id = Guid.NewGuid().ToString(),
                     Balance = createCreditForClientDebit(),
                     Client = client
                 };

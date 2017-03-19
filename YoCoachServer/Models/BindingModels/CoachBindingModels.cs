@@ -80,7 +80,7 @@ namespace YoCoachServer.Models.BindingModels
             public string ScheduleId { get; set; }
 
             [JsonProperty("amount_expend")]
-            public double? AmountExpend { get; set; }
+            public double AmountExpend { get; set; }
         }
     }
 }

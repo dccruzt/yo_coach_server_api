@@ -87,7 +87,6 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    //var schedule = context.Schedule.FirstOrDefault(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId));
                     var schedule = context.Schedule.Where(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId)).Include("Gym").FirstOrDefault();
                     if (schedule != null)
                     {
@@ -97,22 +96,25 @@ namespace YoCoachServer.Models.Repositories
                         //Verify if the schedule has gym
                         if(schedule.Gym != null)
                         {
-                            //Create Invoice for the credit of the gym
-                            //var credit = context.Credit.FirstOrDefault(x => x.Id.Equals(schedule.Gym.Id));
-                            var credit = context.Credit.Where(x => x.Id.Equals(schedule.Gym.Id)).Include("Invoices").FirstOrDefault();
-                            if (credit != null)
+                            var gym = context.Gym.Where(x => x.Id.Equals(schedule.Gym.Id)).Include("Credit").FirstOrDefault();
+                            if(gym != null && gym.Credit != null)
                             {
-                                var invoice = InvoiceRepository.createInvoiceForGym(model.AmountExpend.Value);
-                                credit.Invoices.Add(invoice);
+                                var credit = context.Credit.Where(x => x.Id.Equals(gym.Credit.Id)).Include("Invoices").FirstOrDefault();
+                                if (credit != null)
+                                {
+                                    //Create Invoice for the credit of the gym
+                                    var invoice = InvoiceRepository.createInvoiceForGym(model.AmountExpend);
+                                    credit.Invoices.Add(invoice);
 
-                                //Increase the total credit amount
-                                if (credit.Amount.HasValue)
-                                {
-                                    credit.Amount += model.AmountExpend;
-                                }
-                                else
-                                {
-                                    credit.Amount = model.AmountExpend;
+                                    //Increase the total credit amount
+                                    if (credit.Amount.HasValue)
+                                    {
+                                        credit.Amount += model.AmountExpend;
+                                    }
+                                    else
+                                    {
+                                        credit.Amount = model.AmountExpend;
+                                    }
                                 }
                             }
                         }
@@ -128,23 +130,31 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static void ReceivePayment(string coachId, ScheduleDetailBindingModel model)
+        public static Schedule ReceivePayment(string coachId, ScheduleDetailBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.Find(model.ScheduleId);
+                    var schedule = context.Schedule.Where(x => x.Id.Equals(model.ScheduleId)).Include("ClientDebit").Include("Clients").FirstOrDefault();
                     if(schedule != null)
                     {
-                        if(schedule.ClientDebit != null)
+                        //if not exist a previous payment
+                        if(schedule.ClientDebit == null)
                         {
-                            var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend.Value);
-                            schedule.ClientDebit.Balance.Invoices.Add(invoice);
-
-                            context.SaveChanges();
+                            if (schedule.Clients != null && schedule.Clients.Count != 0)
+                            {
+                                var clientDebit = CreditRepository.createClientDebit(schedule.Clients.First());
+                                schedule.ClientDebit = clientDebit;
+                            }   
                         }
+                        var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
+                        schedule.ClientDebit.Balance.Invoices.Add(invoice);
+
+                        context.SaveChanges();
+                        return schedule;
                     }
+                    return null;
                 }
             }
             catch (Exception ex)

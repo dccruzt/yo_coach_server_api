@@ -15,7 +15,7 @@ namespace YoCoachServer.Models
         {
             Invoices = new List<Invoice>();
         }
-        [Key, ForeignKey("Gym")]
+
         public string Id { get; set; }
 
         [JsonProperty("credit_policy")]
@@ -33,6 +33,5 @@ namespace YoCoachServer.Models
         public int? DayOfPayment { get; set; }
 
         public virtual ICollection<Invoice> Invoices { get; set; }
-        public virtual Gym Gym { get; set; }
     }
 }

@@ -55,6 +55,10 @@ namespace YoCoachServer.Models.BindingModels
             public int? Age { get; set; }
 
             public string Email { get; set; }
+            
+            public DateTimeOffset? CreatedAt { get; set; }
+
+            public DateTimeOffset? UpdateAt { get; set; }
         }
 
         public class NewGymBindingModel

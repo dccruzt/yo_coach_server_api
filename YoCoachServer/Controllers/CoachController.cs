@@ -14,11 +14,11 @@ namespace YoCoachServer.Controllers
     [Authorize]
     public class CoachController : BaseApiController
     {
-        public async Task<IHttpActionResult> ListClients()
+        public IHttpActionResult ListClients()
         {
             try
             {
-                var clients = await CoachRepository.ListClients(CurrentUser.Id, UserManager);
+                var clients = CoachRepository.ListClients(CurrentUser.Id, UserManager);
                 return Ok(clients);
             }
             catch (Exception ex)

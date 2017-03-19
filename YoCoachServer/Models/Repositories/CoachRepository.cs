@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -11,30 +12,36 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        public static async Task<List<ClientBindingModel>> ListClients(string coachId, ApplicationUserManager userManager)
+        public static List<ClientBindingModel> ListClients(string coachId, ApplicationUserManager userManager)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).ToList();
+                    var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).Include("Client").ToList();
                     var modelList = new List<ClientBindingModel>();
                     if (clientCoaches != null)
                     {
                         foreach (var clientCoach in clientCoaches)
                         {
-                            ApplicationUser userClient = await userManager.FindByIdAsync(clientCoach.ClientId);
-                            var model = new ClientBindingModel()
+                            //ApplicationUser userClient = await userManager.FindByIdAsync(clientCoach.ClientId);
+                            var client = context.Client.Where(x => x.ClientId.Equals(clientCoach.ClientId)).Include("User").FirstOrDefault();
+                            if(client != null)
                             {
-                                Id = clientCoach.ClientId,
-                                NickName = clientCoach.NickName,
-                                PhoneNumber = userClient.PhoneNumber,
-                                ClientType = clientCoach.ClientType,
-                                Picture = userClient.Picture,
-                                Age = userClient.Age,
-                                Email = userClient.Email
-                            };
-                            modelList.Add(model);
+                                var model = new ClientBindingModel()
+                                {
+                                    Id = clientCoach.ClientId,
+                                    NickName = clientCoach.NickName,
+                                    PhoneNumber = client.User.PhoneNumber,
+                                    ClientType = clientCoach.ClientType,
+                                    Picture = client.User.Picture,
+                                    Age = client.User.Age,
+                                    Email = client.User.Email,
+                                    CreatedAt = clientCoach.Client.CreatedAt,
+                                    UpdateAt = clientCoach.Client.UpdateAt,
+                                };
+                                modelList.Add(model);
+                            }
                         }
                     }
                     return modelList;

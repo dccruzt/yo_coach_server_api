@@ -37,7 +37,7 @@ namespace YoCoachServer.Models.Repositories
                     CreatedAt = DateTimeOffset.Now,
                     UpdateAt = DateTimeOffset.Now,
                     AmountExpend = amountExpend,
-                    PaidAt = DateTime.Now.ToString()
+                    PaidAt = DateTimeOffset.Now
                 };
                 return invoice;
             }

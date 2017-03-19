@@ -92,9 +92,10 @@ namespace YoCoachServer.Models.Repositories
                     {
                         //Change the schedule state
                         schedule.ScheduleState = ScheduleState.COMPLETED;
+                        schedule.UpdateAt = DateTimeOffset.Now;
 
                         //Verify if the schedule has gym
-                        if(schedule.Gym != null)
+                        if (schedule.Gym != null)
                         {
                             var gym = context.Gym.Where(x => x.Id.Equals(schedule.Gym.Id)).Include("Credit").FirstOrDefault();
                             if(gym != null && gym.Credit != null)
@@ -139,18 +140,32 @@ namespace YoCoachServer.Models.Repositories
                     var schedule = context.Schedule.Where(x => x.Id.Equals(model.ScheduleId)).Include("ClientDebit").Include("Clients").FirstOrDefault();
                     if(schedule != null)
                     {
+                        schedule.UpdateAt = DateTimeOffset.Now;
                         //if not exist a previous payment
                         if(schedule.ClientDebit == null)
                         {
                             if (schedule.Clients != null && schedule.Clients.Count != 0)
                             {
-                                var clientDebit = CreditRepository.createClientDebit(schedule.Clients.First());
+                                var clientDebit = CreditRepository.createClientDebit(schedule.Clients.First(), model.AmountExpend);
                                 schedule.ClientDebit = clientDebit;
-                            }   
+                                var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
+                                schedule.ClientDebit.Balance.Invoices.Add(invoice);
+                            }
                         }
-                        var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
-                        schedule.ClientDebit.Balance.Invoices.Add(invoice);
-
+                        else
+                        {
+                            var clientDebit = context.ClientDebit.Where(x => x.Id.Equals(schedule.Id)).Include("Balance").FirstOrDefault();
+                            if(clientDebit != null && clientDebit.Balance != null)
+                            {
+                                var balance = context.Credit.Where(x => x.Id.Equals(clientDebit.Balance.Id)).Include("Invoices").FirstOrDefault();
+                                if(balance != null)
+                                {
+                                    balance.Amount += model.AmountExpend;
+                                    var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
+                                    balance.Invoices.Add(invoice);
+                                }
+                            }
+                        }
                         context.SaveChanges();
                         return schedule;
                     }

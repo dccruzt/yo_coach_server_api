@@ -10,7 +10,7 @@ namespace YoCoachServer.Models
     {
         public string Id { get; set; }
         [JsonProperty("paid_at")]
-        public string PaidAt { get; set; }
+        public DateTimeOffset? PaidAt { get; set; }
         [JsonProperty("amount_expend")]
         public double? AmountExpend { get; set; }
 

@@ -37,7 +37,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Credit createCreditForClientDebit()
+        public static Credit createCreditForClientDebit(double amount)
         {
             try
             {
@@ -45,6 +45,7 @@ namespace YoCoachServer.Models.Repositories
                 {
                     Id = Guid.NewGuid().ToString(),
                     CreditPolicy = CreditPolicy.POST,
+                    Amount = amount,
                     UnitValue = 1
                 };
                 return credit;
@@ -55,13 +56,13 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static ClientDebit createClientDebit(Client client)
+        public static ClientDebit createClientDebit(Client client, double amount)
         {
             try
             {
                 var clientDebit = new ClientDebit()
                 {
-                    Balance = createCreditForClientDebit(),
+                    Balance = createCreditForClientDebit(amount),
                     Client = client
                 };
                 return clientDebit;

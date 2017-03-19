@@ -76,8 +76,11 @@ namespace YoCoachServer.Controllers
                 }
                 if(CurrentUser != null && CurrentUser.Type.Equals("CO"))
                 {
-                    ScheduleRepository.MarkScheduleAsCompleted(CurrentUser.Id, model);
-                    return Ok();
+                    var schedule = ScheduleRepository.MarkScheduleAsCompleted(CurrentUser.Id, model);
+                    if (schedule != null)
+                    {
+                        return Ok(schedule);
+                    }
                 }
                 return InternalServerError();
             }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Helpers;
@@ -80,39 +81,45 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static void MarkScheduleAsCompleted(string coachId, ScheduleDetailBindingModel model)
+        public static Schedule MarkScheduleAsCompleted(string coachId, ScheduleDetailBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.FirstOrDefault(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId));
+                    //var schedule = context.Schedule.FirstOrDefault(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId));
+                    var schedule = context.Schedule.Where(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId)).Include("Gym").FirstOrDefault();
                     if (schedule != null)
                     {
                         //Change the schedule state
                         schedule.ScheduleState = ScheduleState.COMPLETED;
 
                         //Verify if the schedule has gym
-                        var gym = context.Gym.ToList().Select(x => x.Schedules);
+                        if(schedule.Gym != null)
+                        {
+                            //Create Invoice for the credit of the gym
+                            //var credit = context.Credit.FirstOrDefault(x => x.Id.Equals(schedule.Gym.Id));
+                            var credit = context.Credit.Where(x => x.Id.Equals(schedule.Gym.Id)).Include("Invoices").FirstOrDefault();
+                            if (credit != null)
+                            {
+                                var invoice = InvoiceRepository.createInvoiceForGym(model.AmountExpend.Value);
+                                credit.Invoices.Add(invoice);
 
-                        //Create Invoice for the credit of the gym
-                        var credit = context.Credit.FirstOrDefault(x => x.Id.Equals(schedule.Gym.Id));
-                        if(credit != null)
-                        {
-                            var invoice = InvoiceRepository.createInvoiceForGym(model.AmountExpend.Value);
-                            credit.Invoices.Add(invoice);
-                        }
-                        //Increase the total credit amount
-                        if (credit.Amount.HasValue)
-                        {
-                            credit.Amount += model.AmountExpend;
-                        }
-                        else
-                        {
-                            credit.Amount = model.AmountExpend;
+                                //Increase the total credit amount
+                                if (credit.Amount.HasValue)
+                                {
+                                    credit.Amount += model.AmountExpend;
+                                }
+                                else
+                                {
+                                    credit.Amount = model.AmountExpend;
+                                }
+                            }
                         }
                         context.SaveChanges();
+                        return schedule;
                     }
+                    return null;
                 }
             }
             catch (Exception ex)

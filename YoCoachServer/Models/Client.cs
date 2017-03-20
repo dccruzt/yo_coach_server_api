@@ -24,6 +24,7 @@ namespace YoCoachServer.Models
         [JsonProperty("allow_login_with_code")]
         public bool? AllowLoginWithCode { get; set; }
 
+        [JsonIgnore]
         [JsonProperty("code_to_access")]
         public string CodeToAccess { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Models.BindingModels;
@@ -9,6 +10,34 @@ namespace YoCoachServer.Models.Repositories
 {
     public class ClientRepository
     {
+        public static List<Coach> ListCoaches(string cliendId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var clientCoaches = context.ClientCoach.Where(x => x.ClientId.Equals(cliendId)).Include("Coach").ToList();
+                    var coaches = new List<Coach>();
+                    if (clientCoaches != null)
+                    {
+                        foreach(var clientCoach in clientCoaches)
+                        {
+                            var coach = context.Coach.Where(x => x.CoachId.Equals(clientCoach.CoachId)).Include("User").FirstOrDefault();
+                            if(coach != null)
+                            {
+                                coaches.Add(coach);
+                            }
+                        }
+                    }
+                    return coaches;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public static ValuesBindingModel FetchClientValues(string coachId, GetValuesBindingModel model)
         {
             try

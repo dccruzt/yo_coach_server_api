@@ -22,7 +22,7 @@ namespace YoCoachServer.Helpers
             TwilioClient.Init(accountSid, authToken);
 
             var message = await MessageResource.CreateAsync(
-                to: new PhoneNumber(phoneNumber),
+                to: new PhoneNumber("+" + phoneNumber),
                 from: new PhoneNumber(twilioNumber),
                 body: StringUtils.getSMSMessage(code));
         }

@@ -32,7 +32,8 @@ namespace YoCoachServer.Models.Repositories
             {
                 var client = new Client()
                 {
-                    //ClientId = user.Id
+                    CreatedAt = DateTimeOffset.Now,
+                    UpdateAt = DateTimeOffset.Now,
 
                 };
                 return client;

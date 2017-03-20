@@ -66,7 +66,7 @@ namespace YoCoachServer.Models.Repositories
                     ApplicationUser userClient = await userManager.FindByNameAsync(model.PhoneNumber);
                     if(userClient != null)
                     {
-                        client = context.Client.Find(userClient.Id);
+                        client = context.Client.Where(x => x.ClientId.Equals(userClient.Id)).Include("User").FirstOrDefault();
                     }
                     //if the client doesnt exist, register into the aspnetusers table
                     if(client == null)
@@ -87,6 +87,8 @@ namespace YoCoachServer.Models.Repositories
                         if (result.Succeeded)
                         {
                             await SMSHelper.sendSms(model.PhoneNumber, code);
+                            client.User = user;
+                            return client;
                         }
                     }//If the client exists just create a row clientcoach.
                     else

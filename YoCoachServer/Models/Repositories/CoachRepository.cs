@@ -14,35 +14,35 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        public static List<ClientBindingModel> ListClients(string coachId, ApplicationUserManager userManager)
+        public static List<Client> ListClients(string coachId, ApplicationUserManager userManager)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
                     var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).Include("Client").ToList();
-                    var modelList = new List<ClientBindingModel>();
+                    var modelList = new List<Client>();
                     if (clientCoaches != null)
                     {
                         foreach (var clientCoach in clientCoaches)
                         {
                             //ApplicationUser userClient = await userManager.FindByIdAsync(clientCoach.ClientId);
-                            var client = context.Client.Where(x => x.ClientId.Equals(clientCoach.ClientId)).Include("User").FirstOrDefault();
+                            var client = context.Client.Where(x => x.Id.Equals(clientCoach.ClientId)).Include("User").FirstOrDefault();
                             if(client != null)
                             {
-                                var model = new ClientBindingModel()
-                                {
-                                    Id = clientCoach.ClientId,
-                                    NickName = clientCoach.NickName,
-                                    PhoneNumber = client.User.PhoneNumber,
-                                    ClientType = clientCoach.ClientType,
-                                    Picture = client.User.Picture,
-                                    Age = client.User.Age,
-                                    Email = client.User.Email,
-                                    CreatedAt = clientCoach.Client.CreatedAt,
-                                    UpdateAt = clientCoach.Client.UpdateAt,
-                                };
-                                modelList.Add(model);
+                                //var model = new ClientBindingModel()
+                                //{
+                                //    Id = clientCoach.ClientId,
+                                //    NickName = clientCoach.NickName,
+                                //    PhoneNumber = client.User.PhoneNumber,
+                                //    ClientType = clientCoach.ClientType,
+                                //    Picture = client.User.Picture,
+                                //    Age = client.User.Age,
+                                //    Email = client.User.Email,
+                                //    CreatedAt = clientCoach.Client.CreatedAt,
+                                //    UpdateAt = clientCoach.Client.UpdateAt,
+                                //};
+                                modelList.Add(client);
                             }
                         }
                     }
@@ -66,7 +66,7 @@ namespace YoCoachServer.Models.Repositories
                     ApplicationUser userClient = await userManager.FindByNameAsync(model.PhoneNumber);
                     if(userClient != null)
                     {
-                        client = context.Client.Where(x => x.ClientId.Equals(userClient.Id)).Include("User").FirstOrDefault();
+                        client = context.Client.Where(x => x.Id.Equals(userClient.Id)).Include("User").FirstOrDefault();
                     }
                     //if the client doesnt exist, register into the aspnetusers table
                     if(client == null)
@@ -93,7 +93,7 @@ namespace YoCoachServer.Models.Repositories
                     }//If the client exists just create a row clientcoach.
                     else
                     {
-                        var oldClientCoach = context.ClientCoach.FirstOrDefault(x => x.CoachId.Equals(coachId) && x.ClientId.Equals(client.ClientId));
+                        var oldClientCoach = context.ClientCoach.FirstOrDefault(x => x.CoachId.Equals(coachId) && x.ClientId.Equals(client.Id));
                         if(oldClientCoach == null)
                         {
                             var clientCoach = new ClientCoach()

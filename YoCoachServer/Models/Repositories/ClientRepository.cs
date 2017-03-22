@@ -22,7 +22,7 @@ namespace YoCoachServer.Models.Repositories
                     {
                         foreach(var clientCoach in clientCoaches)
                         {
-                            var coach = context.Coach.Where(x => x.CoachId.Equals(clientCoach.CoachId)).Include("User").FirstOrDefault();
+                            var coach = context.Coach.Where(x => x.Id.Equals(clientCoach.CoachId)).Include("User").FirstOrDefault();
                             if(coach != null)
                             {
                                 coaches.Add(coach);
@@ -44,7 +44,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.Clients.FirstOrDefault().ClientId.Equals(model.ClientId) && x.Coach.CoachId.Equals(coachId)).ToList();
+                    var schedules = context.Schedule.Where(x => x.Clients.FirstOrDefault().Id.Equals(model.ClientId) && x.Coach.Id.Equals(coachId)).ToList();
                     double? notConfirmedAmount = 0;
                     double? confirmedAmount = 0;
                     double? creditsPreQuantity = 0;

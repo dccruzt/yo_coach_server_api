@@ -15,7 +15,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    return context.Gym.Where(x => x.Coach.CoachId.Equals(coachId)).ToList();
+                    return context.Gym.Where(x => x.Coach.Id.Equals(coachId)).ToList();
                 }
             }
             catch (Exception ex)

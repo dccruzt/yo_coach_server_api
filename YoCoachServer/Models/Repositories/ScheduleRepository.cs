@@ -57,7 +57,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.Coach.CoachId.Equals(coachId)).ToList();
+                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").ToList();
                     if (schedules != null)
                     {
                         var schedulesByDay = new List<Schedule>();
@@ -87,7 +87,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.Where(x => x.Coach.CoachId.Equals(coachId) && x.Id.Equals(model.ScheduleId)).Include("Gym").FirstOrDefault();
+                    var schedule = context.Schedule.Where(x => x.Coach.Id.Equals(coachId) && x.Id.Equals(model.ScheduleId)).Include("Gym").FirstOrDefault();
                     if (schedule != null)
                     {
                         //Change the schedule state

@@ -18,9 +18,9 @@ namespace YoCoachServer.Models
         }
 
         [Key, ForeignKey("User")]
-        [JsonProperty("client_id")]
-        public string ClientId { get; set; }
+        public string Id { get; set; }
 
+        [JsonIgnore]
         [JsonProperty("allow_login_with_code")]
         public bool? AllowLoginWithCode { get; set; }
 
@@ -28,6 +28,7 @@ namespace YoCoachServer.Models
         [JsonProperty("code_to_access")]
         public string CodeToAccess { get; set; }
 
+        [JsonIgnore]
         [JsonProperty("code_created_at")]
         public DateTimeOffset? CodeCreatedAt { get; set; }
 

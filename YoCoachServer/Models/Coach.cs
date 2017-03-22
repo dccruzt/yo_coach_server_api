@@ -17,8 +17,7 @@ namespace YoCoachServer.Models
         }
 
         [Key, ForeignKey("User")]
-        [JsonProperty("coach_id")]
-        public string CoachId { get; set; }
+        public string Id { get; set; }
         [JsonProperty("time_to_cancel")]
         public int? TimeToCancel { get; set; }
         [JsonProperty("is_visible_for_clients")]

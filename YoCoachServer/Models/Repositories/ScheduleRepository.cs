@@ -81,6 +81,22 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
+        public static List<Schedule> ListSchedulesForClient(string coachId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").ToList();
+                    return schedules;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public static Schedule MarkScheduleAsCompleted(string coachId, ScheduleDetailBindingModel model)
         {
             try

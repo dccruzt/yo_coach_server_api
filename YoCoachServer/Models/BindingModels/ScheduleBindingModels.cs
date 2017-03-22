@@ -25,4 +25,11 @@ namespace YoCoachServer.Models.BindingModels
         [Required]
         public DateTimeOffset Date { get; set; }
     }
+
+    public class ListSchedulesBindingModel
+    {
+        [Required]
+        [JsonProperty("coach_id")]
+        public string coachId { get; set; }
+    }
 }

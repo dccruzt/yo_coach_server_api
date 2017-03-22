@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
 
 namespace YoCoachServer.Controllers
@@ -21,6 +23,23 @@ namespace YoCoachServer.Controllers
                     return Ok(coaches);
                 }
                 return InternalServerError();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult ListSchedules(ListSchedulesBindingModel model)
+        {
+            try
+            {
+                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
+                {
+                    var schedules = ScheduleRepository.ListSchedulesForClient(model.coachId);
+                    return Ok(schedules);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {

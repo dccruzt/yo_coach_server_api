@@ -20,6 +20,19 @@ namespace YoCoachServer.Models.BindingModels
         public Schedule Schedule { get; set; }
     }
 
+    public class SaveScheduleByClientBindingModel
+    {
+        [Required]
+        [JsonProperty("coach_id")]
+        public string CoachId { get; set; }
+
+        [JsonProperty("gym_id")]
+        public string GymId { get; set; }
+
+        [Required]
+        public Schedule Schedule { get; set; }
+    }
+
     public class ListCoachSchedulesBindingModel
     {
         [Required]

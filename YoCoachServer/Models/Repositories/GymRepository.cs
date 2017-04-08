@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Models.Enums;
@@ -15,7 +16,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    return context.Gym.Where(x => x.Coach.Id.Equals(coachId)).ToList();
+                    return context.Gym.Where(x => x.Coach.Id.Equals(coachId)).Include("Credit").ToList();
                 }
             }
             catch (Exception ex)

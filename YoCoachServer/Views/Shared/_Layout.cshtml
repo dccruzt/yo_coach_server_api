@@ -33,6 +33,19 @@
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/3.7.5/firebase.js"></script>
+    <script>
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyCWlpBMIGct3NIajN_lK1BYDXBNVf_RTR0",
+            authDomain: "yocoachserver.firebaseapp.com",
+            databaseURL: "https://yocoachserver.firebaseio.com",
+            projectId: "yocoachserver",
+            storageBucket: "yocoachserver.appspot.com",
+            messagingSenderId: "21981631525"
+          };
+          firebase.initializeApp(config);
+    </script>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

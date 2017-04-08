@@ -262,6 +262,7 @@
     </Compile>
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\MessageHelper.cs" />
+    <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="Helpers\SMSHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BindingModels\AccountBindingModels.cs" />
@@ -272,11 +273,13 @@
     <Compile Include="Models\Credit.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
     <Compile Include="Models\Gym.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Repositories\CreditRepository.cs" />
     <Compile Include="Models\Repositories\InvoiceRepository.cs" />
     <Compile Include="Models\Repositories\ClientRepository.cs" />
     <Compile Include="Models\Repositories\CoachRepository.cs" />
     <Compile Include="Models\Repositories\GymRepository.cs" />
+    <Compile Include="Models\Repositories\NotificationRepository.cs" />
     <Compile Include="Models\Repositories\ScheduleRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
     <Compile Include="Models\Invoice.cs" />

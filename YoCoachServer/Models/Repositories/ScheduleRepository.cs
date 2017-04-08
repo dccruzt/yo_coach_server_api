@@ -27,7 +27,7 @@ namespace YoCoachServer.Models.Repositories
                     {
                         var schedule = model.Schedule;
                         schedule.Id = Guid.NewGuid().ToString();
-                        schedule.IsConfirmed = false;
+                        schedule.IsConfirmed = true;
                         schedule.PaymentState = StatePayment.PENDING;
                         schedule.ScheduleState = ScheduleState.SCHEDULED;
                         schedule.CreatedAt = DateTimeOffset.Now;
@@ -40,6 +40,45 @@ namespace YoCoachServer.Models.Repositories
 
                         context.SaveChanges();
                         schedule = JsonHelper.parseScheduleWithoutObjects(schedule);
+                        return schedule;
+                    }
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Schedule SaveScheduleByClient(string clientId, SaveScheduleByClientBindingModel model)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var client = context.Client.Find(clientId);
+                    var coach = context.Coach.Find(model.CoachId);
+                    var gym = context.Gym.Find(model.GymId);
+                    if (coach != null && client != null)
+                    {
+                        var schedule = model.Schedule;
+                        schedule.Id = Guid.NewGuid().ToString();
+                        schedule.IsConfirmed = false;
+                        schedule.PaymentState = StatePayment.PENDING;
+                        schedule.ScheduleState = ScheduleState.SCHEDULED;
+                        schedule.CreatedAt = DateTimeOffset.Now;
+                        schedule.UpdateAt = DateTimeOffset.Now;
+                        schedule.Coach = coach;
+                        schedule.Clients.Add(client);
+                        schedule.Gym = gym;
+                        context.Schedule.Add(schedule);
+
+                        context.SaveChanges();
+                        schedule = JsonHelper.parseScheduleWithoutObjects(schedule);
+
+                        NotificationHelper.SendNotfication(NotificationRepository.CreateNotification("d6kRlGOTRZo:APA91bHHS2ImeXE9TqPaA6fN9DtIOYZsN7ya4osRkwqc6ErMx_SJFWjfq6SrFowDjtYv4I5U0b-6Nx-Yfnf8puJFrCRe6mS7RSDcBanRfTfEtDjwDSwMmMAu21uPZeyBpmN8Nlg6QyOZ"));
+
                         return schedule;
                     }
                     return null;

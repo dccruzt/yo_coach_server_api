@@ -22,7 +22,7 @@ namespace YoCoachServer.Controllers
                     var coaches = ClientRepository.ListCoaches(CurrentUser.Id);
                     return Ok(coaches);
                 }
-                return InternalServerError();
+                return BadRequest();
             }
             catch (Exception ex)
             {
@@ -38,6 +38,23 @@ namespace YoCoachServer.Controllers
                 {
                     var schedules = ScheduleRepository.ListSchedulesForClient(model.coachId);
                     return Ok(schedules);
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult SaveSchedule(SaveScheduleByClientBindingModel model)
+        {
+            try
+            {
+                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
+                {
+                    var schedule = ScheduleRepository.SaveScheduleByClient(CurrentUser.Id, model);
+                    return Ok(schedule);
                 }
                 return BadRequest();
             }

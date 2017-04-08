@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,9 +14,9 @@ namespace YoCoachServer.Helpers
 {
     public class SMSHelper
     {
-        private static string accountSid = "AC4972195f0c366e028f30888729676b87";
-        private static string authToken = "d688a275ec1adbcf1194eb99a160292b";
-        private static string twilioNumber = "+13193132419";
+        private static string accountSid = ConfigurationManager.AppSettings["AccountSid"].ToString();
+        private static string authToken = ConfigurationManager.AppSettings["AuthToken"].ToString();
+        private static string twilioNumber = ConfigurationManager.AppSettings["TwilioNumber"].ToString();
 
         public static async Task sendSms(string phoneNumber, string code)
         {

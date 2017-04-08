@@ -13,7 +13,6 @@ namespace YoCoachServer.Models.Repositories
         {
             try
             {
-                //
                 var credit = new Credit()
                 {
                     Id = Guid.NewGuid().ToString(),

@@ -255,6 +255,7 @@
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\CoachController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InstallationController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -276,6 +277,7 @@
     <Compile Include="Models\Installation.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Repositories\CreditRepository.cs" />
+    <Compile Include="Models\Repositories\InstallationRepository.cs" />
     <Compile Include="Models\Repositories\InvoiceRepository.cs" />
     <Compile Include="Models\Repositories\ClientRepository.cs" />
     <Compile Include="Models\Repositories\CoachRepository.cs" />

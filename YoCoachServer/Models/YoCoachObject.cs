@@ -12,5 +12,7 @@ namespace YoCoachServer.Models
         public DateTimeOffset? CreatedAt { get; set; }
         [JsonProperty("update_at")]
         public DateTimeOffset? UpdateAt { get; set; }
+        [JsonProperty("remove_at")]
+        public DateTimeOffset? RemoveAt { get; set; }
     }
 }

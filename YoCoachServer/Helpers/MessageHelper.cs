@@ -13,4 +13,10 @@ namespace YoCoachServer.Helpers
 
         public static string MSG_REGISTER_CLIENT = "Você foi cadastrado com sucesso no YoCoach! Para baixar o app pode descarregar ele aqui {0}. O seu usuario é o seu numero de celular e a senha {1}";
     }
+
+    public class NotificationMessage
+    {
+        public static string NEW_SCHEDULE_TITLE = "O cliente {0} criou um novo agendamento! Entrei no app para ter mais detalhes";
+        public static string NEW_SCHEDULE_BODY = "Novo agendamento";
+    }
 }

@@ -77,7 +77,15 @@ namespace YoCoachServer.Models.Repositories
                         context.SaveChanges();
                         schedule = JsonHelper.parseScheduleWithoutObjects(schedule);
 
-                        NotificationHelper.SendNotfication(NotificationRepository.CreateNotification("d6kRlGOTRZo:APA91bHHS2ImeXE9TqPaA6fN9DtIOYZsN7ya4osRkwqc6ErMx_SJFWjfq6SrFowDjtYv4I5U0b-6Nx-Yfnf8puJFrCRe6mS7RSDcBanRfTfEtDjwDSwMmMAu21uPZeyBpmN8Nlg6QyOZ"));
+                        var installations = InstallationRepository.getInstallations(coach.Id);
+                        if(installations != null)
+                        {
+                            foreach(var installation in installations)
+                            {
+                                var notification = NotificationRepository.CreateNotification(installation.DeviceToken, NotificationMessage.NEW_SCHEDULE_TITLE, NotificationMessage.NEW_SCHEDULE_BODY);
+                                NotificationHelper.SendNotfication(notification);
+                            }
+                        }
 
                         return schedule;
                     }

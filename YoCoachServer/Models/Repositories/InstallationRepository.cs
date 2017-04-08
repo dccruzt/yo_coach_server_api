@@ -3,35 +3,70 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models.Repositories
 {
     public class InstallationRepository
     {
-        public static Installation Register(String userId, Installation installation)
+        public static Installation Register(ApplicationUser currentUser, Installation installation)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-
-                    var client = context.Client.Where(x => x.Id.Equals(userId)).Include("User").ToList();
-                    if (client != null)
+                    ApplicationUser user = null;
+                    if(currentUser.Type.Equals("CO"))
                     {
-                        installation.User = client.FirstOrDefault().User;
+                        user = context.Coach.Where(x => x.Id.Equals(currentUser.Id)).Include("User").ToList().FirstOrDefault().User;
+                        installation.User = user;
                     }
-                    else
+                    else if(currentUser.Type.Equals("CL"))
                     {
-                        var coach = context.Coach.Where(x => x.Id.Equals(userId)).Include("User").ToList();
-                        installation.User = coach.FirstOrDefault().User;
+                        user = context.Client.Where(x => x.Id.Equals(currentUser.Id)).Include("User").ToList().FirstOrDefault().User;
+                        installation.User = user;
+                    }
+
+                    // When is an Android device its necessary disable all the installations the user has.
+                    if(installation.DeviceType.Equals(DeviceType.ANDROID) && user != null)
+                    {
+                        var installations = context.Installation.Where(x => x.User.Id.Equals(user.Id));
+                        if(installations != null)
+                        {
+                            foreach(var inst in installations)
+                            {
+                                if (inst.Enabled)
+                                {
+                                    inst.Enabled = false;
+                                }
+                            }
+                        }
                     }
 
                     installation.Id = Guid.NewGuid().ToString();
-                    
+                    installation.Enabled = true;
+                    installation.CreatedAt = DateTime.Now;
+                    installation.UpdateAt = DateTime.Now;
 
                     context.Installation.Add(installation);
                     context.SaveChanges();
                     return installation;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static List<Installation> getInstallations(String userId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var installations = context.Installation.Where(x => x.User.Id.Equals(userId)).ToList();
+                    return installations;
                 }
             }
             catch (Exception ex)

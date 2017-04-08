@@ -7,19 +7,19 @@ namespace YoCoachServer.Models.Repositories
 {
     public class NotificationRepository
     {
-        public static YoCocahNotification CreateNotification(String deviceToken)
+        public static YoCocahNotification CreateNotification(String deviceToken, String title, String body)
         {
             try
             {
-                var notification = new Notification(){
-                    Title = "Tile yocoach",
-                    Body = "body yocoach"
+                var notification = new Notification() {
+                    Title = title,
+                    Body = body
                 };
 
                 var yoCoachNotification = new YoCocahNotification()
                 {
                     To = deviceToken,
-                    Notification = notification
+                    Notification = notification,
                 };
 
                 return yoCoachNotification;

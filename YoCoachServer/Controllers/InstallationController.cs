@@ -17,7 +17,7 @@ namespace YoCoachServer.Controllers
             {
                 if(CurrentUser.Id != null)
                 {
-                    var installationObj = InstallationRepository.Register(CurrentUser.Id, installation);
+                    var installationObj = InstallationRepository.Register(CurrentUser, installation);
                     if (installationObj != null)
                     {
                         return Ok(installationObj);

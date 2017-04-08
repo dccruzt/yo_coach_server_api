@@ -30,4 +30,16 @@ namespace YoCoachServer.Models.Enums
         MONTHLY,
         LOOSE
     }
+
+    public enum DeviceType
+    {
+        ANDROID,
+        IOS
+    }
+
+    public enum NotificationType
+    {
+        SAVE_SCHEDULE,
+        CANCEL_SCHEDULE
+    }
 }

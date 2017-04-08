@@ -5,6 +5,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace YoCoachServer.Models
 {
@@ -17,6 +19,7 @@ namespace YoCoachServer.Models
         public string Type { get; set; }
         public byte[] Picture { get; set; }
         public int? Age { get; set; }
+        public virtual ICollection<Installation> Installations { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
         {
@@ -42,6 +45,7 @@ namespace YoCoachServer.Models
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<ClientCoach> ClientCoach { get; set; }
         public DbSet<ClientDebit> ClientDebit { get; set; }
+        public DbSet<Installation> Installation { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -273,6 +273,7 @@
     <Compile Include="Models\Credit.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
     <Compile Include="Models\Gym.cs" />
+    <Compile Include="Models\Installation.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Repositories\CreditRepository.cs" />
     <Compile Include="Models\Repositories\InvoiceRepository.cs" />

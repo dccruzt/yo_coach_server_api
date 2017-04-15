@@ -17,56 +17,7 @@ namespace YoCoachServer.Controllers
     [Authorize]
     public class ScheduleController : BaseApiController
     {
-        public IHttpActionResult SaveScheduleByCoach(SaveScheduleByCoachBindingModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                //ApplicationUser current = await UserManager.FindByNameAsync(Thread.CurrentPrincipal.Identity.Name);
-
-                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
-                {
-                    var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model);
-                    if (schedule != null)
-                    {
-                        return Ok(schedule);
-                    }
-                }
-                return InternalServerError();
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
-        }
-
-        public IHttpActionResult ListCoachSchedules(ListCoachSchedulesBindingModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
-                {
-                    var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model.Date);
-                    return Ok(schedules);
-                }
-                return InternalServerError();
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
-        }
-
-        public IHttpActionResult MarkScheduleAsCompleted(ScheduleDetailBindingModel model)
+        public IHttpActionResult MarkAsCompleted(ScheduleDetailBindingModel model)
         {
             try
             {
@@ -76,7 +27,7 @@ namespace YoCoachServer.Controllers
                 }
                 if(CurrentUser != null && CurrentUser.Type.Equals("CO"))
                 {
-                    var schedule = ScheduleRepository.MarkScheduleAsCompleted(CurrentUser.Id, model);
+                    var schedule = ScheduleRepository.MarkAsCompleted(CurrentUser.Id, model);
                     if (schedule != null)
                     {
                         return Ok(schedule);

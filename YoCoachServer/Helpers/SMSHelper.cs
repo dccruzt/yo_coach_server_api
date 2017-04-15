@@ -20,12 +20,19 @@ namespace YoCoachServer.Helpers
 
         public static async Task sendSms(string phoneNumber, string code)
         {
-            TwilioClient.Init(accountSid, authToken);
+            try
+            {
+                TwilioClient.Init(accountSid, authToken);
 
-            var message = await MessageResource.CreateAsync(
-                to: new PhoneNumber("+" + phoneNumber),
-                from: new PhoneNumber(twilioNumber),
-                body: StringUtils.getSMSMessage(code));
+                var message = await MessageResource.CreateAsync(
+                    to: new PhoneNumber("+" + phoneNumber),
+                    from: new PhoneNumber(twilioNumber),
+                    body: StringUtils.getSMSMessage(code));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

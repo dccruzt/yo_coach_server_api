@@ -25,7 +25,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Gym AddGym(string coachId, NewGymBindingModel model)
+        public static Gym SaveGym(string coachId, NewGymBindingModel model)
         {
             try
             {

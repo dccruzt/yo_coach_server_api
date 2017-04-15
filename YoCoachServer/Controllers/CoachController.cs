@@ -15,6 +15,55 @@ namespace YoCoachServer.Controllers
     [Authorize]
     public class CoachController : BaseApiController
     {
+        public IHttpActionResult SaveSchedule(SaveScheduleByCoachBindingModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                //ApplicationUser current = await UserManager.FindByNameAsync(Thread.CurrentPrincipal.Identity.Name);
+
+                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                {
+                    var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model);
+                    if (schedule != null)
+                    {
+                        return Ok(schedule);
+                    }
+                }
+                return InternalServerError();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        public IHttpActionResult ListSchedules(ListCoachSchedulesBindingModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                {
+                    var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model.Date);
+                    return Ok(schedules);
+                }
+                return InternalServerError();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         public IHttpActionResult ListClients()
         {
             try
@@ -67,7 +116,7 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult AddGym(NewGymBindingModel model)
+        public IHttpActionResult SaveGym(NewGymBindingModel model)
         {
             try
             {
@@ -78,7 +127,7 @@ namespace YoCoachServer.Controllers
 
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    var gym = GymRepository.AddGym(CurrentUser.Id, model);
+                    var gym = GymRepository.SaveGym(CurrentUser.Id, model);
                     if(gym != null)
                     {
                         return Ok(gym);
@@ -86,23 +135,6 @@ namespace YoCoachServer.Controllers
                 }
                 return InternalServerError(null);
                 
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
-        }
-
-        public IHttpActionResult FetchClientValues(GetValuesBindingModel model)
-        {
-            try
-            {
-                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
-                {
-                    ValuesBindingModel valuesModel = ClientRepository.FetchClientValues(CurrentUser.Id, model);
-                    return Ok(valuesModel);
-                }
-                return InternalServerError(null);
             }
             catch (Exception ex)
             {

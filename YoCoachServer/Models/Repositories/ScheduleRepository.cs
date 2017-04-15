@@ -20,19 +20,26 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var coach = context.Coach.Find(coachId);
+                    var coach = context.Coach.Where(x => x.Id.Equals(coachId)).Include("User").ToList().FirstOrDefault();
                     var client = context.Client.Find(model.ClientId);
                     var gym = context.Gym.Find(model.GymId);
-                    if (coach != null && client != null)
+                    if (coach != null && client != null && gym != null)
                     {
-                        var schedule = model.Schedule;
-                        schedule.Id = Guid.NewGuid().ToString();
+                        Schedule schedule = null;
+                        if (model.Schedule.Id != null)
+                        {
+                            schedule = context.Schedule.Find(model.Schedule.Id);
+                        }
+                        else
+                        {
+                            schedule = model.Schedule;
+                            schedule.Id = Guid.NewGuid().ToString();
+                            schedule.CreatedAt = DateTimeOffset.Now;
+                        }
                         schedule.IsConfirmed = true;
                         schedule.PaymentState = StatePayment.PENDING;
                         schedule.ScheduleState = ScheduleState.SCHEDULED;
-                        schedule.CreatedAt = DateTimeOffset.Now;
                         schedule.UpdateAt = DateTimeOffset.Now;
-                        //schedule.ClientDebit = CreditRepository.createClientDebit(client);
                         schedule.Coach = coach;
                         schedule.Clients.Add(client);
                         schedule.Gym = gym;
@@ -40,6 +47,20 @@ namespace YoCoachServer.Models.Repositories
 
                         context.SaveChanges();
                         schedule = JsonHelper.parseScheduleWithoutObjects(schedule);
+
+                        var installations = InstallationRepository.getInstallations(client.Id);
+                        if (installations != null)
+                        {
+                            foreach (var installation in installations)
+                            {
+                                var notification = NotificationRepository.CreateNotification(
+                                    installation.DeviceToken,
+                                    coach.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    NotificationMessage.NEW_SCHEDULE_BODY);
+
+                                NotificationHelper.SendNotfication(notification);
+                            }
+                        }
                         return schedule;
                     }
                     return null;
@@ -57,10 +78,10 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var client = context.Client.Find(clientId);
+                    var client = context.Client.Where(x => x.Id.Equals(clientId)).Include("User").ToList().FirstOrDefault();
                     var coach = context.Coach.Find(model.CoachId);
                     var gym = context.Gym.Find(model.GymId);
-                    if (coach != null && client != null)
+                    if (coach != null && client != null && gym != null)
                     {
                         var schedule = model.Schedule;
                         schedule.Id = Guid.NewGuid().ToString();
@@ -82,11 +103,14 @@ namespace YoCoachServer.Models.Repositories
                         {
                             foreach(var installation in installations)
                             {
-                                var notification = NotificationRepository.CreateNotification(installation.DeviceToken, NotificationMessage.NEW_SCHEDULE_TITLE, NotificationMessage.NEW_SCHEDULE_BODY);
+                                var notification = NotificationRepository.CreateNotification(
+                                    installation.DeviceToken,
+                                    client.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    NotificationMessage.NEW_SCHEDULE_BODY);
+
                                 NotificationHelper.SendNotfication(notification);
                             }
                         }
-
                         return schedule;
                     }
                     return null;
@@ -144,7 +168,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Schedule MarkScheduleAsCompleted(string coachId, ScheduleDetailBindingModel model)
+        public static Schedule MarkAsCompleted(string coachId, ScheduleDetailBindingModel model)
         {
             try
             {

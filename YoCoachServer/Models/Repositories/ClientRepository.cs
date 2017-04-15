@@ -22,7 +22,7 @@ namespace YoCoachServer.Models.Repositories
                     {
                         foreach(var clientCoach in clientCoaches)
                         {
-                            var coach = context.Coach.Where(x => x.Id.Equals(clientCoach.CoachId)).Include("User").FirstOrDefault();
+                            var coach = context.Coach.Where(x => x.Id.Equals(clientCoach.CoachId)).Include("User").Include("Gyms").FirstOrDefault();
                             if(coach != null)
                             {
                                 coaches.Add(coach);

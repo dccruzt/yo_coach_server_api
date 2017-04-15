@@ -16,7 +16,7 @@ namespace YoCoachServer.Helpers
 
     public class NotificationMessage
     {
-        public static string NEW_SCHEDULE_TITLE = "O cliente {0} criou um novo agendamento! Entrei no app para ter mais detalhes";
+        public static string NEW_SCHEDULE_TITLE = "criou um novo agendamento! Entrei no app para ter mais detalhes";
         public static string NEW_SCHEDULE_BODY = "Novo agendamento";
     }
 }

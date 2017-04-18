@@ -42,7 +42,7 @@ namespace YoCoachServer.Providers
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                 CookieAuthenticationDefaults.AuthenticationType);
 
-            AuthenticationProperties properties = CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Age.HasValue ? user.Age.Value : 0), user.PhoneNumber, (user.Picture == null) ? "" : user.Picture.ToString());
+            AuthenticationProperties properties = CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Birthday.HasValue ? user.Birthday.Value.ToString() : ""), user.PhoneNumber, (user.Picture == null) ? "" : user.Picture.ToString());
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -84,7 +84,7 @@ namespace YoCoachServer.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(string id, string type, string userName, string name, string email, int age, string phoneNumber, string picture)
+        public static AuthenticationProperties CreateProperties(string id, string type, string userName, string name, string email, string age, string phoneNumber, string picture)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {

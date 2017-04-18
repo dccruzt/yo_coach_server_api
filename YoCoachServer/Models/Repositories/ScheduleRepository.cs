@@ -53,10 +53,11 @@ namespace YoCoachServer.Models.Repositories
                         {
                             foreach (var installation in installations)
                             {
-                                var notification = NotificationRepository.CreateNotification(
+                                var notification = NotificationRepository.CreateNotificationForSaveSchedule(
                                     installation.DeviceToken,
                                     coach.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
-                                    NotificationMessage.NEW_SCHEDULE_BODY);
+                                    NotificationMessage.NEW_SCHEDULE_BODY,
+                                    NotificationType.SAVE_SCHEDULE);
 
                                 NotificationHelper.SendNotfication(notification);
                             }
@@ -103,10 +104,11 @@ namespace YoCoachServer.Models.Repositories
                         {
                             foreach(var installation in installations)
                             {
-                                var notification = NotificationRepository.CreateNotification(
+                                var notification = NotificationRepository.CreateNotificationForSaveSchedule(
                                     installation.DeviceToken,
                                     client.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
-                                    NotificationMessage.NEW_SCHEDULE_BODY);
+                                    NotificationMessage.NEW_SCHEDULE_BODY,
+                                    NotificationType.SAVE_SCHEDULE);
 
                                 NotificationHelper.SendNotfication(notification);
                             }

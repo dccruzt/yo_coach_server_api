@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
@@ -9,7 +10,7 @@ namespace YoCoachServer.Models
     {
         public string To { get; set; }
         public Notification Notification { get; set; }
-        public string Data { get; set; }
+        public Dictionary<String, Object> Data { get; set; }
     }
 
     public class Notification

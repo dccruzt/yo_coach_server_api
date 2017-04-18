@@ -30,7 +30,7 @@ namespace YoCoachServer.Models.BindingModels
             
             public bool IsExpired { get; set; }
 
-            public int? Age { get; set; }
+            public DateTimeOffset? Birthday { get; set; }
         }
 
         public class ClientBindingModel

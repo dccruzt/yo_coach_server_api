@@ -266,7 +266,7 @@ namespace YoCoachServer.Controllers
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Age.HasValue ? user.Age.Value : 0), user.PhoneNumber, user.Picture.ToString());
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Birthday.HasValue ? user.Birthday.Value.ToString() : ""), user.PhoneNumber, user.Picture.ToString());
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else

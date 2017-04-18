@@ -34,7 +34,7 @@ namespace YoCoachServer.Controllers
                         return Ok(schedule);
                     }
                 }
-                return InternalServerError();
+                return BadRequest();
             }
             catch (Exception ex)
             {
@@ -68,8 +68,8 @@ namespace YoCoachServer.Controllers
         {
             try
             {
-                var clients = CoachRepository.ListClients(CurrentUser.Id, UserManager);
-                return Ok(clients);
+                var clientCoaches = CoachRepository.ListClients(CurrentUser.Id, UserManager);
+                return Ok(clientCoaches);
             }
             catch (Exception ex)
             {

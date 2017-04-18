@@ -7,6 +7,9 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace YoCoachServer.Models
 {
@@ -18,7 +21,7 @@ namespace YoCoachServer.Models
         public string Name { get; set; }
         public string Type { get; set; }
         public byte[] Picture { get; set; }
-        public int? Age { get; set; }
+        public DateTimeOffset? Birthday { get; set; }
         public virtual ICollection<Installation> Installations { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)

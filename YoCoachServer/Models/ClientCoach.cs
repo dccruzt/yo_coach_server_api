@@ -11,14 +11,20 @@ namespace YoCoachServer.Models
 {
     public class ClientCoach
     {
+        [JsonProperty("Id")]
         [Key, Column(Order = 0)]
         public string ClientId { get; set; }
 
+        [JsonIgnore]
         [Key, Column(Order = 1)]
         public string CoachId { get; set; }
 
         [JsonProperty("nick_name")]
         public string NickName { get; set; }
+
+        public string Email { get; set; }
+        
+        public DateTimeOffset? Birthday { get; set; }
 
         public string Code { get; set; }
 

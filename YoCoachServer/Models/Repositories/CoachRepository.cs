@@ -14,39 +14,42 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        public static List<Client> ListClients(string coachId, ApplicationUserManager userManager)
+        //public static List<Client> ListClients(string coachId, ApplicationUserManager userManager)
+        //{
+        //    try
+        //    {
+        //        using (var context = new YoCoachServerContext())
+        //        {
+        //            var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).Include("Client").ToList();
+        //            var modelList = new List<Client>();
+        //            if (clientCoaches != null)
+        //            {
+        //                foreach (var clientCoach in clientCoaches)
+        //                {
+        //                    var client = context.Client.Where(x => x.Id.Equals(clientCoach.ClientId)).Include("User").FirstOrDefault();
+        //                    if(client != null)
+        //                    {
+        //                        modelList.Add(client);
+        //                    }
+        //                }
+        //            }
+        //            return modelList;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        public static List<ClientCoach> ListClients(string coachId, ApplicationUserManager userManager)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).Include("Client").ToList();
-                    var modelList = new List<Client>();
-                    if (clientCoaches != null)
-                    {
-                        foreach (var clientCoach in clientCoaches)
-                        {
-                            //ApplicationUser userClient = await userManager.FindByIdAsync(clientCoach.ClientId);
-                            var client = context.Client.Where(x => x.Id.Equals(clientCoach.ClientId)).Include("User").FirstOrDefault();
-                            if(client != null)
-                            {
-                                //var model = new ClientBindingModel()
-                                //{
-                                //    Id = clientCoach.ClientId,
-                                //    NickName = clientCoach.NickName,
-                                //    PhoneNumber = client.User.PhoneNumber,
-                                //    ClientType = clientCoach.ClientType,
-                                //    Picture = client.User.Picture,
-                                //    Age = client.User.Age,
-                                //    Email = client.User.Email,
-                                //    CreatedAt = clientCoach.Client.CreatedAt,
-                                //    UpdateAt = clientCoach.Client.UpdateAt,
-                                //};
-                                modelList.Add(client);
-                            }
-                        }
-                    }
-                    return modelList;
+                    var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).ToList();
+                    return clientCoaches;
                 }
             }
             catch (Exception ex)
@@ -80,7 +83,7 @@ namespace YoCoachServer.Models.Repositories
                             Name = model.NickName,
                             Email = model.Email,
                             Type = "CL",
-                            Age = model.Age,
+                            Birthday = model.Birthday,
                             Client = client
                         };
                         IdentityResult result = await userManager.CreateAsync(user, code);

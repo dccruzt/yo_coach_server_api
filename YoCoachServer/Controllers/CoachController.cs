@@ -53,7 +53,7 @@ namespace YoCoachServer.Controllers
 
                 if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
                 {
-                    var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model.Date);
+                    var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model);
                     return Ok(schedules);
                 }
                 return InternalServerError();

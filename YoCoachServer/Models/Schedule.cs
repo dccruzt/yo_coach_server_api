@@ -43,7 +43,6 @@ namespace YoCoachServer.Models
         
         public virtual Gym Gym { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<Client> Clients { get; set; }
         
         public virtual ClientDebit ClientDebit { get; set; }

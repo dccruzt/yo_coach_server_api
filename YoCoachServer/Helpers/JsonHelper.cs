@@ -24,10 +24,6 @@ namespace YoCoachServer.Helpers
             {
                 schedule.Coach = null;
             }
-            if (schedule.Clients != null)
-            {
-                schedule.Clients = null;
-            }
             return schedule;
         }
 

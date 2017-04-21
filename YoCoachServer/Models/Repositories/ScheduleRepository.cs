@@ -124,26 +124,29 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static List<Schedule> ListCoachSchedule(string coachId, DateTimeOffset date)
+        public static List<Schedule> ListCoachSchedule(string coachId, ListCoachSchedulesBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").ToList();
-                    if (schedules != null)
+                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").Include("Clients").ToList();
+                    if (model != null)
                     {
-                        var schedulesByDay = new List<Schedule>();
-                        foreach (var schedule in schedules)
+                        if (schedules != null)
                         {
-                            
-                            DateTimeOffset datea = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
-                            if (DateUtils.SameDate(datea, date))
+                            var schedulesByDay = new List<Schedule>();
+                            foreach (var schedule in schedules)
                             {
-                                schedulesByDay.Add(schedule);
+
+                                DateTimeOffset dateStart = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
+                                if (DateUtils.SameDate(dateStart, model.Date.Value))
+                                {
+                                    schedulesByDay.Add(schedule);
+                                }
                             }
+                            return schedulesByDay;
                         }
-                        return schedulesByDay;
                     }
                     return schedules;
                 }

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
-using YoCoachServer.Helpers;
+using System.Web.Http.ModelBinding;
+using YoCoachServer.Models;
 
-namespace YoCoachServer.Utils
+namespace YoCoachServer.Helpers
 {
-    public class StringUtils
+    public class StringHelper
     {
         private static string LINk_APP = "https://play.google.com/store/apps/details?id=upc.edu.pe.desaplg";
 

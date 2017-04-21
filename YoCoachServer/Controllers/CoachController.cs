@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using YoCoachServer.Helpers;
+using YoCoachServer.Models;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;
@@ -21,10 +22,9 @@ namespace YoCoachServer.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_MODEL, ErrorHelper.GetModelErrors(ModelState)));
                 }
-
-                //ApplicationUser current = await UserManager.FindByNameAsync(Thread.CurrentPrincipal.Identity.Name);
 
                 if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
                 {
@@ -38,7 +38,8 @@ namespace YoCoachServer.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult("", ex.StackTrace));
             }
         }
 

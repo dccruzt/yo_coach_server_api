@@ -27,7 +27,7 @@ namespace YoCoachServer.Helpers
                 var message = await MessageResource.CreateAsync(
                     to: new PhoneNumber("+" + phoneNumber),
                     from: new PhoneNumber(twilioNumber),
-                    body: StringUtils.getSMSMessage(code));
+                    body: StringHelper.getSMSMessage(code));
             }
             catch (Exception ex)
             {

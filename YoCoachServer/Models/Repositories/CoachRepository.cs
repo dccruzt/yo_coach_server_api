@@ -14,34 +14,6 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        //public static List<Client> ListClients(string coachId, ApplicationUserManager userManager)
-        //{
-        //    try
-        //    {
-        //        using (var context = new YoCoachServerContext())
-        //        {
-        //            var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).Include("Client").ToList();
-        //            var modelList = new List<Client>();
-        //            if (clientCoaches != null)
-        //            {
-        //                foreach (var clientCoach in clientCoaches)
-        //                {
-        //                    var client = context.Client.Where(x => x.Id.Equals(clientCoach.ClientId)).Include("User").FirstOrDefault();
-        //                    if(client != null)
-        //                    {
-        //                        modelList.Add(client);
-        //                    }
-        //                }
-        //            }
-        //            return modelList;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
-
         public static List<ClientCoach> ListClients(string coachId, ApplicationUserManager userManager)
         {
             try
@@ -74,7 +46,7 @@ namespace YoCoachServer.Models.Repositories
                     //if the client doesnt exist, register into the aspnetusers table
                     if(client == null)
                     {
-                        var code = StringUtils.GenerateCode();
+                        var code = StringHelper.GenerateCode();
                         client = UserRepository.CreateUserClientByCoach(coachId, model, code);
                         var user = new ApplicationUser()
                         {
@@ -103,7 +75,7 @@ namespace YoCoachServer.Models.Repositories
                             {
                                 CoachId = coachId,
                                 Client = client,
-                                NickName = model.NickName,
+                                Name = model.NickName,
                                 Code = model.Code,
                                 IsExpired = false,
                                 ClientType = model.ClientType

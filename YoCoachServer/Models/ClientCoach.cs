@@ -18,9 +18,8 @@ namespace YoCoachServer.Models
         [JsonIgnore]
         [Key, Column(Order = 1)]
         public string CoachId { get; set; }
-
-        [JsonProperty("nick_name")]
-        public string NickName { get; set; }
+        
+        public string Name { get; set; }
 
         public string Email { get; set; }
         

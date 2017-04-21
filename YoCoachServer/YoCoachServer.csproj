@@ -261,6 +261,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ErrorHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\MessageHelper.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Models\ClientCoach.cs" />
     <Compile Include="Models\Credit.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
+    <Compile Include="Models\ErrorResult.cs" />
     <Compile Include="Models\Gym.cs" />
     <Compile Include="Models\Installation.cs" />
     <Compile Include="Models\Notification.cs" />
@@ -303,7 +305,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\DateUtils.cs" />
     <Compile Include="Utils\JsonLowerCaseUnderscoreContractResolver.cs" />
-    <Compile Include="Utils\StringUtils.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />

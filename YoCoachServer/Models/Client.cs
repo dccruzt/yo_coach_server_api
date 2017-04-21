@@ -32,7 +32,6 @@ namespace YoCoachServer.Models
         [JsonProperty("code_created_at")]
         public DateTimeOffset? CodeCreatedAt { get; set; }
 
-
         public virtual ApplicationUser User { get; set; }
 
         [JsonIgnore]

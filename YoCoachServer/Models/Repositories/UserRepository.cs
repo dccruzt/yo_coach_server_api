@@ -52,7 +52,7 @@ namespace YoCoachServer.Models.Repositories
                 var clientCoach = new ClientCoach()
                 {
                     CoachId = coachId,
-                    NickName = model.NickName,
+                    Name = model.NickName,
                     Code = model.Code,
                     IsExpired = false,
                     ClientType = model.ClientType

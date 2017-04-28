@@ -19,6 +19,8 @@ using YoCoachServer.Results;
 using YoCoachServer.Models.ViewModels;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
+using System.Net;
+using YoCoachServer.Helpers;
 
 namespace YoCoachServer.Controllers
 {
@@ -325,42 +327,52 @@ namespace YoCoachServer.Controllers
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
+                }
 
-            Coach coach = null;
-            Student student = null;
-            
-            if (model.Type.Equals("CO"))
-            {
-                coach = UserRepository.CreateUserCoach();
-                
-            }
-            if (model.Type.Equals("CL"))
-            {
-                student = UserRepository.CreateUserClient();
-            }
+                Coach coach = null;
+                Student student = null;
 
-            var user = new ApplicationUser()
-            {
-                UserName = model.PhoneNumber,
-                PhoneNumber = model.PhoneNumber,
-                Name = model.Name,
-                Type = model.Type,
-                Coach = coach,
-                Student = student
-            };
-            
-            IdentityResult userResult = await UserManager.CreateAsync(user, model.Password);
+                if (model.Type.Equals("CO"))
+                {
+                    coach = UserRepository.CreateUserCoach();
 
-            var roleResult = await UserManager.AddToRoleAsync(user.Id, "coach");
-            if (!userResult.Succeeded)
-            {
-                return GetErrorResult(userResult);
+                }
+                if (model.Type.Equals("CL"))
+                {
+                    student = UserRepository.CreateUserClient();
+                }
+
+                var user = new ApplicationUser()
+                {
+                    UserName = model.PhoneNumber,
+                    PhoneNumber = model.PhoneNumber,
+                    Name = model.Name,
+                    Type = model.Type,
+                    Coach = coach,
+                    Student = student
+                };
+
+                var userResult = await UserManager.CreateAsync(user, model.Password);
+                var roleResult = await UserManager.AddToRoleAsync(user.Id, "coach");
+
+                if (userResult.Succeeded)
+                {
+                    return Ok(user);
+                }
+                return Content(HttpStatusCode.BadRequest,
+                       new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
+            }
         }
 
         // POST api/Account/RegisterExternal

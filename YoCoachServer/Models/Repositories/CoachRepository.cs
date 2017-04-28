@@ -141,7 +141,9 @@ namespace YoCoachServer.Models.Repositories
                             Birthday = studentCoach.Birthday,
                             Student = student
                         };
-                        IdentityResult result = await userManager.CreateAsync(user, code);
+                        var result = await userManager.CreateAsync(user, code);
+                        var roleResult = await userManager.AddToRoleAsync(user.Id, "student");
+
                         if (result.Succeeded)
                         {
                             await SMSHelper.sendSms(studentCoach.PhoneNumber, code);

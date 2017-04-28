@@ -113,7 +113,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task<Student> RegisterStudent(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
+        public async static Task<Student> RegisterStudent(string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace YoCoachServer.Models.Repositories
                 {
                     //Check if the user exists
                     Student student = null;
-                    ApplicationUser userClient = await userManager.FindByNameAsync(model.PhoneNumber);
+                    ApplicationUser userClient = await userManager.FindByNameAsync(studentCoach.PhoneNumber);
                     if(userClient != null)
                     {
                         student = context.Student.Where(x => x.Id.Equals(userClient.Id)).Include("User").FirstOrDefault();
@@ -130,21 +130,21 @@ namespace YoCoachServer.Models.Repositories
                     if(student == null)
                     {
                         var code = StringHelper.GenerateCode();
-                        student = UserRepository.CreateUserClientByCoach(coachId, model, code);
+                        student = UserRepository.CreateStudentByCoach(coachId, studentCoach, code);
                         var user = new ApplicationUser()
                         {
-                            UserName = model.PhoneNumber,
-                            PhoneNumber = model.PhoneNumber,
-                            Name = model.NickName,
-                            Email = model.Email,
+                            UserName = studentCoach.PhoneNumber,
+                            PhoneNumber = studentCoach.PhoneNumber,
+                            Name = studentCoach.Name,
+                            Email = studentCoach.Email,
                             Type = "CL",
-                            Birthday = model.Birthday,
+                            Birthday = studentCoach.Birthday,
                             Student = student
                         };
                         IdentityResult result = await userManager.CreateAsync(user, code);
                         if (result.Succeeded)
                         {
-                            await SMSHelper.sendSms(model.PhoneNumber, code);
+                            await SMSHelper.sendSms(studentCoach.PhoneNumber, code);
                             student.User = user;
                             return student;
                         }
@@ -158,10 +158,10 @@ namespace YoCoachServer.Models.Repositories
                             {
                                 CoachId = coachId,
                                 Student = student,
-                                Name = model.NickName,
-                                Code = model.Code,
+                                Name = studentCoach.Name,
+                                Code = studentCoach.Code,
                                 IsExpired = false,
-                                StudentType = model.StudentType
+                                StudentType = studentCoach.StudentType
                             };
                             context.SaveChanges();
                         }

@@ -11,7 +11,10 @@ namespace YoCoachServer.Helpers
     {
         public static string INVALID_URI = "INVALID_URI";
         public static string INVALID_BODY = "INVALID_BODY";
+        public static string DATABASE_ERROR = "DATABASE_ERROR";
         public static string EXCEPTION = "EXCEPTION";
+
+        public static string INFO_DATABASE_ERROR = "Some error ocurred with the server or database, please try again.";
 
         public static String GetModelErrors(ModelStateDictionary modelStateDictionary)
         {

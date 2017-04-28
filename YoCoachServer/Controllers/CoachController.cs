@@ -31,7 +31,8 @@ namespace YoCoachServer.Controllers
                 {
                     return Ok(result);
                 }
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
             }
             catch (Exception ex)
             {
@@ -77,21 +78,24 @@ namespace YoCoachServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> RegisterStudent(RegisterClientBindingModel model)
+        public async Task<IHttpActionResult> RegisterStudent(StudentCoach studentCoach)
         {
             try
             {
                 if(!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-                
-                if(CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
+
+                var student = await CoachRepository.RegisterStudent(CurrentUser.Id, studentCoach, UserManager);
+                if(student != null)
                 {
-                    var client = await CoachRepository.RegisterStudent(CurrentUser.Id, model, UserManager);
-                    return Ok(client);
+                    return Ok(student);
                 }
-                return InternalServerError(null);
+
+                return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
             }
             catch (Exception ex)
             {
@@ -100,16 +104,13 @@ namespace YoCoachServer.Controllers
             }
         }
 
+        [HttpGet]
         public IHttpActionResult ListGyms()
         {
             try
             {
-                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
-                {
-                    var gyms = GymRepository.ListGyms(CurrentUser.Id);
-                    return Ok(gyms);
-                }
-                return InternalServerError(null);
+                var gyms = GymRepository.ListGyms(CurrentUser.Id);
+                return Ok(gyms);
             }
             catch (Exception ex)
             {
@@ -118,25 +119,26 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult SaveGym(NewGymBindingModel model)
+        [HttpPost]
+        public IHttpActionResult SaveGym(Gym gym)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
 
-                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
+                var result = GymRepository.SaveGym(CurrentUser.Id, gym);
+                if (result != null)
                 {
-                    var gym = GymRepository.SaveGym(CurrentUser.Id, model);
-                    if(gym != null)
-                    {
-                        return Ok(gym);
-                    }
+                    return Ok(gym);
                 }
-                return InternalServerError(null);
-                
+
+                return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
+
             }
             catch (Exception ex)
             {

@@ -25,7 +25,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Gym SaveGym(string coachId, NewGymBindingModel model)
+        public static Gym SaveGym(string coachId, Gym gym)
         {
             try
             {
@@ -34,17 +34,13 @@ namespace YoCoachServer.Models.Repositories
                     var coach = context.Coach.Find(coachId);
                     if (coach != null)
                     {
-                        var credit = CreditRepository.createCreditForGym(model);
+                        var credit = CreditRepository.createCreditForGym(gym);
 
-                        var gym = new Gym()
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = model.Name,
-                            Address = model.Address,
-                            Credit = credit,
-                            CreatedAt = DateTimeOffset.Now,
-                            UpdateAt = DateTimeOffset.Now
-                        };
+                        gym.Id = Guid.NewGuid().ToString();
+                        gym.Credit = credit;
+                        gym.CreatedAt = DateTimeOffset.Now;
+                        gym.UpdateAt = DateTimeOffset.Now;
+
                         coach.Gyms.Add(gym);
                         context.SaveChanges();
                         gym.Coach = null;

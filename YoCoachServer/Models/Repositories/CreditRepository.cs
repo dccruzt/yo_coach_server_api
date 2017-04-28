@@ -9,24 +9,24 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CreditRepository
     {
-        public static Credit createCreditForGym(NewGymBindingModel model)
+        public static Credit createCreditForGym(Gym gym)
         {
             try
             {
                 var credit = new Credit()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    CreditPolicy = model.Credit.CreditPolicy,
-                    UnitValue = model.Credit.UnitValue
+                    CreditPolicy = gym.Credit.CreditPolicy,
+                    UnitValue = gym.Credit.UnitValue
                 };
 
-                if (model.Credit.CreditPolicy.Equals(CreditPolicy.PRE))
+                if (gym.Credit.CreditPolicy.Equals(CreditPolicy.PRE))
                 {
-                    credit.ExpiresAt = model.Credit.ExpiresAt;
+                    credit.ExpiresAt = gym.Credit.ExpiresAt;
                 }
-                if (model.Credit.CreditPolicy.Equals(CreditPolicy.POST))
+                if (gym.Credit.CreditPolicy.Equals(CreditPolicy.POST))
                 {
-                    credit.DayOfPayment = model.Credit.DayOfPayment;
+                    credit.DayOfPayment = gym.Credit.DayOfPayment;
                 }
                 return credit;
             }

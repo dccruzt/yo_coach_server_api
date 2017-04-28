@@ -44,20 +44,20 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Student CreateUserClientByCoach(string coachId, RegisterClientBindingModel model, string code)
+        public static Student CreateStudentByCoach(string coachId, StudentCoach studentCoach, string code)
         {
             try
             {
-                var ClientCoachList = new List<StudentCoach>();
+                var StudentCoachList = new List<StudentCoach>();
                 var clientCoach = new StudentCoach()
                 {
                     CoachId = coachId,
-                    Name = model.NickName,
-                    Code = model.Code,
+                    Name = studentCoach.Name,
+                    Code = studentCoach.Code,
                     IsExpired = false,
-                    StudentType = model.StudentType
+                    StudentType = studentCoach.StudentType
                 };
-                ClientCoachList.Add(clientCoach);
+                StudentCoachList.Add(clientCoach);
 
                 var client = new Student()
                 {
@@ -66,7 +66,7 @@ namespace YoCoachServer.Models.Repositories
                     AllowLoginWithCode = true,
                     CodeToAccess = code,
                     CodeCreatedAt = DateTimeOffset.Now,
-                    StudentCoaches = ClientCoachList
+                    StudentCoaches = StudentCoachList
 
                 };
                 return client;

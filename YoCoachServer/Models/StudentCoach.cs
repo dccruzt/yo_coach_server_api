@@ -33,6 +33,9 @@ namespace YoCoachServer.Models
         [JsonProperty("client_type")]
         public StudentType? StudentType { get; set; }
 
+        [JsonProperty("phone_number")]
+        public String PhoneNumber { get; set; }
+
         public virtual Student Student { get; set; }
         public virtual Coach Coach { get; set; }
     }

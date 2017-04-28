@@ -26,11 +26,11 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Client CreateUserClient()
+        public static Student CreateUserClient()
         {
             try
             {
-                var client = new Client()
+                var client = new Student()
                 {
                     CreatedAt = DateTimeOffset.Now,
                     UpdateAt = DateTimeOffset.Now,
@@ -44,29 +44,29 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Client CreateUserClientByCoach(string coachId, RegisterClientBindingModel model, string code)
+        public static Student CreateUserClientByCoach(string coachId, RegisterClientBindingModel model, string code)
         {
             try
             {
-                var ClientCoachList = new List<ClientCoach>();
-                var clientCoach = new ClientCoach()
+                var ClientCoachList = new List<StudentCoach>();
+                var clientCoach = new StudentCoach()
                 {
                     CoachId = coachId,
                     Name = model.NickName,
                     Code = model.Code,
                     IsExpired = false,
-                    ClientType = model.ClientType
+                    StudentType = model.StudentType
                 };
                 ClientCoachList.Add(clientCoach);
 
-                var client = new Client()
+                var client = new Student()
                 {
                     CreatedAt = DateTimeOffset.Now,
                     UpdateAt = DateTimeOffset.Now,
                     AllowLoginWithCode = true,
                     CodeToAccess = code,
                     CodeCreatedAt = DateTimeOffset.Now,
-                    ClientCoaches = ClientCoachList
+                    StudentCoaches = ClientCoachList
 
                 };
                 return client;

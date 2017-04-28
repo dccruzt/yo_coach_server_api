@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using YoCoachServer.Helpers;
+using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Enums;
 using YoCoachServer.Utils;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;
@@ -14,13 +15,95 @@ namespace YoCoachServer.Models.Repositories
 {
     public class CoachRepository
     {
-        public static List<ClientCoach> ListClients(string coachId, ApplicationUserManager userManager)
+
+        public static Schedule SaveSchedule(ApplicationUser coach, Schedule schedule)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var clientCoaches = context.ClientCoach.Where(x => x.CoachId.Equals(coachId)).ToList();
+                    schedule.Id = Guid.NewGuid().ToString();
+                    schedule.CoachId = coach.Id;
+                    schedule.CreatedAt = DateTimeOffset.Now;
+                    schedule.UpdateAt = DateTimeOffset.Now;
+                    schedule.IsConfirmed = true;
+                    schedule.PaymentState = StatePayment.PENDING;
+                    schedule.ScheduleState = ScheduleState.SCHEDULED;
+
+                    var existingStudents = new List<Student>();
+                    foreach (var student in schedule.Students)
+                    {
+                        var existingStudent = context.Student.Find(student.Id);
+                        if (existingStudent != null)
+                        {
+                            existingStudents.Add(existingStudent);
+                        }
+                    }
+                    schedule.Students = existingStudents;
+                    context.Schedule.Add(schedule);
+
+                    context.SaveChanges();
+
+                    var installations = InstallationRepository.getInstallations(schedule.Students.ToList());
+                    if (installations != null)
+                    {
+                        foreach (var installation in installations)
+                        {
+                            var notification = NotificationRepository.CreateNotificationForSaveSchedule(
+                                installation.DeviceToken,
+                                coach.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                NotificationMessage.NEW_SCHEDULE_BODY,
+                                NotificationType.SAVE_SCHEDULE);
+
+                            NotificationHelper.SendNotfication(notification);
+                        }
+                    }
+                    return schedule;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static List<Schedule> ListSchedules(string coachId, String date)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include("Gym").Include("Students").ToList();
+                    if (date != null)
+                    {
+                        DateTimeOffset filterDate = DateTimeOffset.Parse(date);
+                        var schedulesByDay = new List<Schedule>();
+                        foreach (var schedule in schedules)
+                        {
+                            DateTimeOffset dateStart = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
+                            if (DateUtils.SameDate(dateStart, filterDate))
+                            {
+                                schedulesByDay.Add(schedule);
+                            }
+                        }
+                        return schedulesByDay;
+                    }
+                    return schedules;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static List<StudentCoach> ListStudents(string coachId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var clientCoaches = context.StudentCoach.Where(x => x.CoachId.Equals(coachId)).ToList();
                     return clientCoaches;
                 }
             }
@@ -30,24 +113,24 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task<Client> RegisterClient(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
+        public async static Task<Student> RegisterStudent(string coachId, RegisterClientBindingModel model, ApplicationUserManager userManager)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
                     //Check if the user exists
-                    Client client = null;
+                    Student student = null;
                     ApplicationUser userClient = await userManager.FindByNameAsync(model.PhoneNumber);
                     if(userClient != null)
                     {
-                        client = context.Client.Where(x => x.Id.Equals(userClient.Id)).Include("User").FirstOrDefault();
+                        student = context.Student.Where(x => x.Id.Equals(userClient.Id)).Include("User").FirstOrDefault();
                     }
-                    //if the client doesnt exist, register into the aspnetusers table
-                    if(client == null)
+                    //if the student doesnt exist, register into the aspnetusers table
+                    if(student == null)
                     {
                         var code = StringHelper.GenerateCode();
-                        client = UserRepository.CreateUserClientByCoach(coachId, model, code);
+                        student = UserRepository.CreateUserClientByCoach(coachId, model, code);
                         var user = new ApplicationUser()
                         {
                             UserName = model.PhoneNumber,
@@ -56,34 +139,50 @@ namespace YoCoachServer.Models.Repositories
                             Email = model.Email,
                             Type = "CL",
                             Birthday = model.Birthday,
-                            Client = client
+                            Student = student
                         };
                         IdentityResult result = await userManager.CreateAsync(user, code);
                         if (result.Succeeded)
                         {
                             await SMSHelper.sendSms(model.PhoneNumber, code);
-                            client.User = user;
-                            return client;
+                            student.User = user;
+                            return student;
                         }
-                    }//If the client exists just create a row clientcoach.
+                    }//If the student exists just create a row clientcoach.
                     else
                     {
-                        var oldClientCoach = context.ClientCoach.FirstOrDefault(x => x.CoachId.Equals(coachId) && x.ClientId.Equals(client.Id));
+                        var oldClientCoach = context.StudentCoach.FirstOrDefault(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(student.Id));
                         if(oldClientCoach == null)
                         {
-                            var clientCoach = new ClientCoach()
+                            var clientCoach = new StudentCoach()
                             {
                                 CoachId = coachId,
-                                Client = client,
+                                Student = student,
                                 Name = model.NickName,
                                 Code = model.Code,
                                 IsExpired = false,
-                                ClientType = model.ClientType
+                                StudentType = model.StudentType
                             };
                             context.SaveChanges();
                         }
                     }
-                    return client;
+                    return student;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static List<Installation> getInstallations(Coach coach)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var installations = context.Installation.Where(x => x.User.Id.Equals(coach.Id)).ToList();
+                    return installations;
                 }
             }
             catch (Exception ex)

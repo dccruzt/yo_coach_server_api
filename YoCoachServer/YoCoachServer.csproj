@@ -252,7 +252,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
-    <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\CoachController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InstallationController.cs" />
@@ -266,16 +266,13 @@
     <Compile Include="Helpers\MessageHelper.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />
     <Compile Include="Helpers\SMSHelper.cs" />
-    <Compile Include="Migrations\201704180525285_InitialCreate.cs" />
-    <Compile Include="Migrations\201704180525285_InitialCreate.Designer.cs">
-      <DependentUpon>201704180525285_InitialCreate.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Attributes\CheckDateAttribute.cs" />
     <Compile Include="Models\BindingModels\AccountBindingModels.cs" />
     <Compile Include="Models\BindingModels\ClientBindingModels.cs" />
     <Compile Include="Models\BindingModels\CoachBindingModels.cs" />
     <Compile Include="Models\BindingModels\ScheduleBindingModels.cs" />
-    <Compile Include="Models\ClientCoach.cs" />
+    <Compile Include="Models\StudentCoach.cs" />
     <Compile Include="Models\Credit.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />
     <Compile Include="Models\ErrorResult.cs" />
@@ -285,16 +282,16 @@
     <Compile Include="Models\Repositories\CreditRepository.cs" />
     <Compile Include="Models\Repositories\InstallationRepository.cs" />
     <Compile Include="Models\Repositories\InvoiceRepository.cs" />
-    <Compile Include="Models\Repositories\ClientRepository.cs" />
+    <Compile Include="Models\Repositories\StudentRepository.cs" />
     <Compile Include="Models\Repositories\CoachRepository.cs" />
     <Compile Include="Models\Repositories\GymRepository.cs" />
     <Compile Include="Models\Repositories\NotificationRepository.cs" />
     <Compile Include="Models\Repositories\ScheduleRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
     <Compile Include="Models\Invoice.cs" />
-    <Compile Include="Models\ClientDebit.cs" />
+    <Compile Include="Models\StudentDebit.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
-    <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Coach.cs" />
     <Compile Include="Models\YoCoachObject.cs" />
     <Compile Include="Models\YoCoachServerContext.cs" />
@@ -380,11 +377,6 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201704180525285_InitialCreate.resx">
-      <DependentUpon>201704180525285_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

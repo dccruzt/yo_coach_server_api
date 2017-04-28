@@ -8,7 +8,7 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models.Repositories
 {
-    public class ClientRepository
+    public class StudentRepository
     {
         public static List<Coach> ListCoaches(string cliendId)
         {
@@ -16,13 +16,13 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var clientCoaches = context.ClientCoach.Where(x => x.ClientId.Equals(cliendId)).Include("Coach").ToList();
+                    var studentCoaches = context.StudentCoach.Where(x => x.StudentId.Equals(cliendId)).Include("Coach").ToList();
                     var coaches = new List<Coach>();
-                    if (clientCoaches != null)
+                    if (studentCoaches != null)
                     {
-                        foreach(var clientCoach in clientCoaches)
+                        foreach(var studentCoach in studentCoaches)
                         {
-                            var coach = context.Coach.Where(x => x.Id.Equals(clientCoach.CoachId)).Include("User").Include("Gyms").FirstOrDefault();
+                            var coach = context.Coach.Where(x => x.Id.Equals(studentCoach.CoachId)).Include("User").Include("Gyms").FirstOrDefault();
                             if(coach != null)
                             {
                                 coaches.Add(coach);
@@ -38,13 +38,29 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
+        public static List<Schedule> ListSchedules(string coachId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").ToList();
+                    return schedules;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public static ValuesBindingModel FetchClientValues(string coachId, GetValuesBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.Clients.FirstOrDefault().Id.Equals(model.ClientId) && x.Coach.Id.Equals(coachId)).ToList();
+                    var schedules = context.Schedule.Where(x => x.Students.FirstOrDefault().Id.Equals(model.StudentId) && x.Coach.Id.Equals(coachId)).ToList();
                     double? notConfirmedAmount = 0;
                     double? confirmedAmount = 0;
                     double? creditsPreQuantity = 0;
@@ -77,10 +93,10 @@ namespace YoCoachServer.Models.Repositories
                             }
                         }
                     }
-                    var clientCoach = context.ClientCoach.FirstOrDefault(x => x.ClientId.Equals(model.ClientId) && x.CoachId.Equals(coachId));
+                    var studentCoach = context.StudentCoach.FirstOrDefault(x => x.StudentId.Equals(model.StudentId) && x.CoachId.Equals(coachId));
                     ValuesBindingModel valueModel = new ValuesBindingModel()
                     {
-                        ClientType = clientCoach.ClientType,
+                        StudentType = studentCoach.StudentType,
                         CreditsPreQuantity = creditsPreQuantity,
                         CreditsPostQuantity = creditsPostQuantity,
                         ConfirmedAmount = confirmedAmount,

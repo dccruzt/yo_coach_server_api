@@ -9,7 +9,9 @@ namespace YoCoachServer.Helpers
 {
     public class ErrorHelper
     {
-        public static string INVALID_MODEL = "INVALID_MODEL";
+        public static string INVALID_URI = "INVALID_URI";
+        public static string INVALID_BODY = "INVALID_BODY";
+        public static string EXCEPTION = "EXCEPTION";
 
         public static String GetModelErrors(ModelStateDictionary modelStateDictionary)
         {
@@ -20,7 +22,7 @@ namespace YoCoachServer.Helpers
                 {
                     foreach (ModelError modelError in modelState.Errors)
                     {
-                        error += modelError.ErrorMessage + " ";
+                        error += modelError.ErrorMessage + ", ";
                     }
                 }
                 return error;

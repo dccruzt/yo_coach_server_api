@@ -1,5 +1,6 @@
 namespace YoCoachServer.Migrations
 {
+    using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -9,7 +10,7 @@ namespace YoCoachServer.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
             AutomaticMigrationDataLossAllowed = true;
         }
 
@@ -27,6 +28,11 @@ namespace YoCoachServer.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+            //context.Roles.AddOrUpdate(
+            //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "admin" },
+            //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "coach" },
+            //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "student" }
+            //    );
         }
     }
 }

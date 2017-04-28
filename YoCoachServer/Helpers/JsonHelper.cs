@@ -18,15 +18,6 @@ namespace YoCoachServer.Helpers
             settings.ContractResolver = new JsonLowerCaseUnderscoreContractResolver();
         }
 
-        public static Schedule parseScheduleWithoutObjects(Schedule schedule)
-        {
-            if (schedule.Coach != null)
-            {
-                schedule.Coach = null;
-            }
-            return schedule;
-        }
-
         public static String serializeObject(Object obj)
         {
             try

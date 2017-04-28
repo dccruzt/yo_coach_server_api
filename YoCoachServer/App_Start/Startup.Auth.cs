@@ -61,7 +61,7 @@ namespace YoCoachServer
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
-            //    ClientId = "",
+            //    StudentId = "",
             //    ClientSecret = ""
             //});
         }

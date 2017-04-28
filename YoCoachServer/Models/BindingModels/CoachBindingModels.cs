@@ -21,8 +21,8 @@ namespace YoCoachServer.Models.BindingModels
             public string NickName { get; set; }
 
             [Required]
-            [JsonProperty("client_type")]
-            public ClientType ClientType { get; set; }
+            [JsonProperty("student_type")]
+            public StudentType StudentType { get; set; }
 
             public string Email { get; set; }
 
@@ -47,8 +47,8 @@ namespace YoCoachServer.Models.BindingModels
             public string PhoneNumber { get; set; }
 
             [Required]
-            [JsonProperty("client_type")]
-            public ClientType? ClientType { get; set; }
+            [JsonProperty("student_type")]
+            public StudentType? StudentType { get; set; }
 
             public byte[] Picture { get; set; }
 

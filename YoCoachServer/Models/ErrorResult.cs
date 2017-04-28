@@ -8,12 +8,12 @@ namespace YoCoachServer.Models
     public class ErrorResult
     {
         public String Code { get; set; }
-        public String Detail { get; set; }
+        public String Message { get; set; }
 
-        public ErrorResult(String Code, String Detail)
+        public ErrorResult(String code, String message)
         {
-            this.Code = Code;
-            this.Detail = Detail;
+            this.Code = code;
+            this.Message = message;
         }
     }
 }

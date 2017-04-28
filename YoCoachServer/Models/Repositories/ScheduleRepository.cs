@@ -14,75 +14,16 @@ namespace YoCoachServer.Models.Repositories
 {
     public class ScheduleRepository
     {
-        public static Schedule SaveScheduleByCoach(string coachId, SaveScheduleByCoachBindingModel model)
+        public static Schedule SaveScheduleByStudent(string clientId, SaveScheduleByClientBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var coach = context.Coach.Where(x => x.Id.Equals(coachId)).Include("User").ToList().FirstOrDefault();
-                    var client = context.Client.Find(model.ClientId);
-                    var gym = context.Gym.Find(model.GymId);
-                    if (coach != null && client != null && gym != null)
-                    {
-                        Schedule schedule = null;
-                        if (model.Schedule.Id != null)
-                        {
-                            schedule = context.Schedule.Find(model.Schedule.Id);
-                        }
-                        else
-                        {
-                            schedule = model.Schedule;
-                            schedule.Id = Guid.NewGuid().ToString();
-                            schedule.CreatedAt = DateTimeOffset.Now;
-                        }
-                        schedule.IsConfirmed = true;
-                        schedule.PaymentState = StatePayment.PENDING;
-                        schedule.ScheduleState = ScheduleState.SCHEDULED;
-                        schedule.UpdateAt = DateTimeOffset.Now;
-                        schedule.Coach = coach;
-                        schedule.Clients.Add(client);
-                        schedule.Gym = gym;
-                        context.Schedule.Add(schedule);
-
-                        context.SaveChanges();
-                        schedule = JsonHelper.parseScheduleWithoutObjects(schedule);
-
-                        var installations = InstallationRepository.getInstallations(client.Id);
-                        if (installations != null)
-                        {
-                            foreach (var installation in installations)
-                            {
-                                var notification = NotificationRepository.CreateNotificationForSaveSchedule(
-                                    installation.DeviceToken,
-                                    coach.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
-                                    NotificationMessage.NEW_SCHEDULE_BODY,
-                                    NotificationType.SAVE_SCHEDULE);
-
-                                NotificationHelper.SendNotfication(notification);
-                            }
-                        }
-                        return schedule;
-                    }
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public static Schedule SaveScheduleByClient(string clientId, SaveScheduleByClientBindingModel model)
-        {
-            try
-            {
-                using (var context = new YoCoachServerContext())
-                {
-                    var client = context.Client.Where(x => x.Id.Equals(clientId)).Include("User").ToList().FirstOrDefault();
+                    var student = context.Student.Where(x => x.Id.Equals(clientId)).Include("User").ToList().FirstOrDefault();
                     var coach = context.Coach.Find(model.CoachId);
                     var gym = context.Gym.Find(model.GymId);
-                    if (coach != null && client != null && gym != null)
+                    if (coach != null && student != null && gym != null)
                     {
                         var schedule = model.Schedule;
                         schedule.Id = Guid.NewGuid().ToString();
@@ -92,21 +33,20 @@ namespace YoCoachServer.Models.Repositories
                         schedule.CreatedAt = DateTimeOffset.Now;
                         schedule.UpdateAt = DateTimeOffset.Now;
                         schedule.Coach = coach;
-                        schedule.Clients.Add(client);
+                        schedule.Students.Add(student);
                         schedule.Gym = gym;
                         context.Schedule.Add(schedule);
 
                         context.SaveChanges();
-                        schedule = JsonHelper.parseScheduleWithoutObjects(schedule);
 
-                        var installations = InstallationRepository.getInstallations(coach.Id);
+                        var installations = CoachRepository.getInstallations(schedule.Coach);
                         if(installations != null)
                         {
                             foreach(var installation in installations)
                             {
                                 var notification = NotificationRepository.CreateNotificationForSaveSchedule(
                                     installation.DeviceToken,
-                                    client.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    student.User.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
                                     NotificationMessage.NEW_SCHEDULE_BODY,
                                     NotificationType.SAVE_SCHEDULE);
 
@@ -116,55 +56,6 @@ namespace YoCoachServer.Models.Repositories
                         return schedule;
                     }
                     return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public static List<Schedule> ListCoachSchedule(string coachId, ListCoachSchedulesBindingModel model)
-        {
-            try
-            {
-                using (var context = new YoCoachServerContext())
-                {
-                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").Include("Clients").ToList();
-                    if (model != null)
-                    {
-                        if (schedules != null)
-                        {
-                            var schedulesByDay = new List<Schedule>();
-                            foreach (var schedule in schedules)
-                            {
-
-                                DateTimeOffset dateStart = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
-                                if (DateUtils.SameDate(dateStart, model.Date.Value))
-                                {
-                                    schedulesByDay.Add(schedule);
-                                }
-                            }
-                            return schedulesByDay;
-                        }
-                    }
-                    return schedules;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public static List<Schedule> ListSchedulesForClient(string coachId)
-        {
-            try
-            {
-                using (var context = new YoCoachServerContext())
-                {
-                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").ToList();
-                    return schedules;
                 }
             }
             catch (Exception ex)
@@ -229,19 +120,19 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.Where(x => x.Id.Equals(model.ScheduleId)).Include("ClientDebit").Include("Clients").FirstOrDefault();
+                    var schedule = context.Schedule.Where(x => x.Id.Equals(model.ScheduleId)).Include("StudentDebit").Include("Students").FirstOrDefault();
                     if(schedule != null)
                     {
                         schedule.UpdateAt = DateTimeOffset.Now;
                         //if not exist a previous payment
-                        if(schedule.ClientDebit == null)
+                        if(schedule.StudentDebit == null)
                         {
-                            if (schedule.Clients != null && schedule.Clients.Count != 0)
+                            if (schedule.Students != null && schedule.Students.Count != 0)
                             {
-                                var clientDebit = CreditRepository.createClientDebit(schedule.Clients.First(), model.AmountExpend);
-                                schedule.ClientDebit = clientDebit;
+                                var clientDebit = CreditRepository.createClientDebit(schedule.Students.First(), model.AmountExpend);
+                                schedule.StudentDebit = clientDebit;
                                 var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
-                                schedule.ClientDebit.Balance.Invoices.Add(invoice);
+                                schedule.StudentDebit.Balance.Invoices.Add(invoice);
                             }
                         }
                         else

@@ -9,11 +9,11 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
-    public class ClientCoach
+    public class StudentCoach
     {
         [JsonProperty("Id")]
         [Key, Column(Order = 0)]
-        public string ClientId { get; set; }
+        public string StudentId { get; set; }
 
         [JsonIgnore]
         [Key, Column(Order = 1)]
@@ -31,9 +31,9 @@ namespace YoCoachServer.Models
         public bool? IsExpired { get; set; }
 
         [JsonProperty("client_type")]
-        public ClientType? ClientType { get; set; }
+        public StudentType? StudentType { get; set; }
 
-        public virtual Client Client { get; set; }
+        public virtual Student Student { get; set; }
         public virtual Coach Coach { get; set; }
     }
 }

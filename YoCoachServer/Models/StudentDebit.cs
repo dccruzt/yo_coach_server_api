@@ -7,12 +7,12 @@ using System.Web;
 
 namespace YoCoachServer.Models
 {
-    public class ClientDebit
+    public class StudentDebit
     {
         [Key, ForeignKey("Schedule")]
         public string Id { get; set; }
 
-        public virtual Client Client { get; set; }
+        public virtual Student Client { get; set; }
         public virtual Credit Balance { get; set; }
 
         public virtual Schedule Schedule { get; set; }

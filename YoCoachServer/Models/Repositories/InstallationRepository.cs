@@ -23,7 +23,7 @@ namespace YoCoachServer.Models.Repositories
                     }
                     else if(currentUser.Type.Equals("CL"))
                     {
-                        user = context.Client.Where(x => x.Id.Equals(currentUser.Id)).Include("User").ToList().FirstOrDefault().User;
+                        user = context.Student.Where(x => x.Id.Equals(currentUser.Id)).Include("User").ToList().FirstOrDefault().User;
                         installation.User = user;
                     }
 
@@ -59,13 +59,18 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static List<Installation> getInstallations(String userId)
+        public static List<Installation> getInstallations(List<Student> users)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var installations = context.Installation.Where(x => x.User.Id.Equals(userId)).ToList();
+                    var installations = new List<Installation>();
+                    foreach(Student user in users)
+                    {
+                        var installationsByUser = context.Installation.Where(x => x.User.Id.Equals(user.Id)).ToList();
+                        installations.AddRange(installationsByUser);
+                    }
                     return installations;
                 }
             }

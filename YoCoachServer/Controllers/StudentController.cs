@@ -11,7 +11,7 @@ using YoCoachServer.Models.Repositories;
 namespace YoCoachServer.Controllers
 {
     [Authorize]
-    public class ClientController : BaseApiController
+    public class StudentController : BaseApiController
     {
         public IHttpActionResult ListCoaches()
         {
@@ -19,7 +19,7 @@ namespace YoCoachServer.Controllers
             {
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
                 {
-                    var coaches = ClientRepository.ListCoaches(CurrentUser.Id);
+                    var coaches = StudentRepository.ListCoaches(CurrentUser.Id);
                     return Ok(coaches);
                 }
                 return BadRequest();
@@ -36,7 +36,7 @@ namespace YoCoachServer.Controllers
             {
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
                 {
-                    var schedules = ScheduleRepository.ListSchedulesForClient(model.coachId);
+                    var schedules = StudentRepository.ListSchedules(model.coachId);
                     return Ok(schedules);
                 }
                 return BadRequest();
@@ -53,7 +53,7 @@ namespace YoCoachServer.Controllers
             {
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
                 {
-                    var schedule = ScheduleRepository.SaveScheduleByClient(CurrentUser.Id, model);
+                    var schedule = ScheduleRepository.SaveScheduleByStudent(CurrentUser.Id, model);
                     return Ok(schedule);
                 }
                 return BadRequest();
@@ -70,7 +70,7 @@ namespace YoCoachServer.Controllers
             {
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    ValuesBindingModel valuesModel = ClientRepository.FetchClientValues(CurrentUser.Id, model);
+                    ValuesBindingModel valuesModel = StudentRepository.FetchClientValues(CurrentUser.Id, model);
                     return Ok(valuesModel);
                 }
                 return InternalServerError(null);

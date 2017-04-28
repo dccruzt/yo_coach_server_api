@@ -13,10 +13,12 @@ using Newtonsoft.Json;
 
 namespace YoCoachServer.Models
 {
+    public class ApplicationUserRole : IdentityUserRole<string> { }
+
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
-        public virtual Client Client { get; set; }
+        public virtual Student Student { get; set; }
         public virtual Coach Coach { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
@@ -33,6 +35,22 @@ namespace YoCoachServer.Models
         }
     }
 
+    public class ApplicationRole : IdentityRole<string, ApplicationUserRole>
+    {
+        public ApplicationRole()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
+
+        public ApplicationRole(string name)
+            : this()
+        {
+            this.Name = name;
+        }
+
+        // Add any custom Role properties/code here
+    }
+
     public class YoCoachServerContext : IdentityDbContext<ApplicationUser>
     {
         public YoCoachServerContext() : base("YoCoachServerDB", throwIfV1Schema: false)
@@ -41,13 +59,13 @@ namespace YoCoachServer.Models
         }
 
         public DbSet<Coach> Coach { get; set; }
-        public DbSet<Client> Client { get; set; }
+        public DbSet<Student> Student { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
         public DbSet<Gym> Gym { get; set; }
         public DbSet<Credit> Credit { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
-        public DbSet<ClientCoach> ClientCoach { get; set; }
-        public DbSet<ClientDebit> ClientDebit { get; set; }
+        public DbSet<StudentCoach> StudentCoach { get; set; }
+        public DbSet<StudentDebit> ClientDebit { get; set; }
         public DbSet<Installation> Installation { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -55,7 +73,7 @@ namespace YoCoachServer.Models
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             //modelBuilder.Entity<Credit>().HasRequired(m => m.Gym).WithOptional(m => m.Credit);
-            //modelBuilder.Entity<ClientDebit>().HasRequired(m => m.Schedule).WithOptional(m => m.ClientDebit);
+            //modelBuilder.Entity<StudentDebit>().HasRequired(m => m.Schedule).WithOptional(m => m.StudentDebit);
         }
 
         public static YoCoachServerContext Create()

@@ -55,11 +55,11 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static ClientDebit createClientDebit(Client client, double amount)
+        public static StudentDebit createClientDebit(Student client, double amount)
         {
             try
             {
-                var clientDebit = new ClientDebit()
+                var clientDebit = new StudentDebit()
                 {
                     Balance = createCreditForClientDebit(amount),
                     Client = client

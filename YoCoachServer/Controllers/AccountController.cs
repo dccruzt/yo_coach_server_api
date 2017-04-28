@@ -331,7 +331,7 @@ namespace YoCoachServer.Controllers
             }
 
             Coach coach = null;
-            Client client = null;
+            Student student = null;
             
             if (model.Type.Equals("CO"))
             {
@@ -340,7 +340,7 @@ namespace YoCoachServer.Controllers
             }
             if (model.Type.Equals("CL"))
             {
-                client = UserRepository.CreateUserClient();
+                student = UserRepository.CreateUserClient();
             }
 
             var user = new ApplicationUser()
@@ -350,13 +350,15 @@ namespace YoCoachServer.Controllers
                 Name = model.Name,
                 Type = model.Type,
                 Coach = coach,
-                Client = client
+                Student = student
             };
             
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
+            IdentityResult userResult = await UserManager.CreateAsync(user, model.Password);
+
+            var roleResult = await UserManager.AddToRoleAsync(user.Id, "coach");
+            if (!userResult.Succeeded)
             {
-                return GetErrorResult(result);
+                return GetErrorResult(userResult);
             }
             return Ok();
         }

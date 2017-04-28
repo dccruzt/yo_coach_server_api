@@ -9,12 +9,12 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
-    public class Client : YoCoachObject
+    public class Student : YoCoachObject
     {
-        public Client()
+        public Student()
         {
             Schedules = new List<Schedule>();
-            ClientCoaches = new List<ClientCoach>();
+            StudentCoaches = new List<StudentCoach>();
         }
 
         [Key, ForeignKey("User")]
@@ -37,6 +37,6 @@ namespace YoCoachServer.Models
         [JsonIgnore]
         public virtual ICollection<Schedule> Schedules { get; set; }
         [JsonIgnore]
-        public virtual ICollection<ClientCoach> ClientCoaches { get; set; }
+        public virtual ICollection<StudentCoach> StudentCoaches { get; set; }
     }
 }

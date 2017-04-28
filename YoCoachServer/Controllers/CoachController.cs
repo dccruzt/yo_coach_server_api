@@ -13,72 +13,71 @@ using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "coach")]
     public class CoachController : BaseApiController
     {
-        public IHttpActionResult SaveSchedule(SaveScheduleByCoachBindingModel model)
+        [HttpPost]
+        public IHttpActionResult SaveSchedule(Schedule schedule)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
                     return Content(HttpStatusCode.BadRequest,
-                        new ErrorResult(ErrorHelper.INVALID_MODEL, ErrorHelper.GetModelErrors(ModelState)));
+                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-
-                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                var result = CoachRepository.SaveSchedule(CurrentUser, schedule);
+                if (result != null)
                 {
-                    var schedule = ScheduleRepository.SaveScheduleByCoach(CurrentUser.Id, model);
-                    if (schedule != null)
-                    {
-                        return Ok(schedule);
-                    }
+                    return Ok(result);
                 }
                 return BadRequest();
             }
             catch (Exception ex)
             {
                 return Content(HttpStatusCode.InternalServerError,
-                    new ErrorResult("", ex.StackTrace));
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 
-        public IHttpActionResult ListSchedules(ListCoachSchedulesBindingModel model)
+        [HttpGet]
+        public IHttpActionResult ListSchedules(String date = null)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_URI, ErrorHelper.GetModelErrors(ModelState)));
                 }
 
-                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
-                {
-                    var schedules = ScheduleRepository.ListCoachSchedule(CurrentUser.Id, model);
-                    return Ok(schedules);
-                }
-                return InternalServerError();
+                var schedules = CoachRepository.ListSchedules(CurrentUser.Id, date);
+                return Ok(schedules);
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 
-        public IHttpActionResult ListClients()
+        [HttpGet]
+        public IHttpActionResult ListStudents()
         {
             try
             {
-                var clientCoaches = CoachRepository.ListClients(CurrentUser.Id, UserManager);
+                var clientCoaches = CoachRepository.ListStudents(CurrentUser.Id);
                 return Ok(clientCoaches);
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 
-        public async Task<IHttpActionResult> RegisterClient(RegisterClientBindingModel model)
+        [HttpPost]
+        public async Task<IHttpActionResult> RegisterStudent(RegisterClientBindingModel model)
         {
             try
             {
@@ -89,14 +88,15 @@ namespace YoCoachServer.Controllers
                 
                 if(CurrentUser.Id != null && CurrentUser.Type.Equals("CO"))
                 {
-                    var client = await CoachRepository.RegisterClient(CurrentUser.Id, model, UserManager);
+                    var client = await CoachRepository.RegisterStudent(CurrentUser.Id, model, UserManager);
                     return Ok(client);
                 }
                 return InternalServerError(null);
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 
@@ -113,7 +113,8 @@ namespace YoCoachServer.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 
@@ -139,7 +140,8 @@ namespace YoCoachServer.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
     }

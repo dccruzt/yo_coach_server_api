@@ -25,7 +25,7 @@ namespace YoCoachServer.Models.Enums
         POST
     }
 
-    public enum ClientType
+    public enum StudentType
     {
         MONTHLY,
         LOOSE

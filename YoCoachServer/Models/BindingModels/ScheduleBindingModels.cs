@@ -10,8 +10,8 @@ namespace YoCoachServer.Models.BindingModels
     public class SaveScheduleByCoachBindingModel
     {
         [Required]
-        [JsonProperty("client_id")]
-        public string ClientId { get; set; }
+        [JsonProperty("student_id")]
+        public string StudentId { get; set; }
 
         [JsonProperty("gym_id")]
         public string GymId { get; set; }
@@ -31,11 +31,6 @@ namespace YoCoachServer.Models.BindingModels
 
         [Required]
         public Schedule Schedule { get; set; }
-    }
-
-    public class ListCoachSchedulesBindingModel
-    {
-        public DateTimeOffset? Date { get; set; }
     }
 
     public class ListSchedulesBindingModel

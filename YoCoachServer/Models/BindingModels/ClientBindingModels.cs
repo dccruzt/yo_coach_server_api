@@ -10,8 +10,8 @@ namespace YoCoachServer.Models.BindingModels
 {
     public class ValuesBindingModel
     {
-        [JsonProperty("client_type")]
-        public ClientType? ClientType { get; set; }
+        [JsonProperty("student_type")]
+        public StudentType? StudentType { get; set; }
 
         [JsonProperty("credits_pre_quantity")]
         public double? CreditsPreQuantity { get; set; }
@@ -32,8 +32,8 @@ namespace YoCoachServer.Models.BindingModels
     public class GetValuesBindingModel
     {
         [Required]
-        [JsonProperty("client_id")]
-        public string ClientId { get; set; }
+        [JsonProperty("student_id")]
+        public string StudentId { get; set; }
 
         public string Date { get; set; }
     }

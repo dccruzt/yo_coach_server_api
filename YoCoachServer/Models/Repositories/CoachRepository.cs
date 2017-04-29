@@ -113,7 +113,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task<Student> RegisterStudent(string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
+        public async static Task<StudentCoach> RegisterStudent(string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
         {
             try
             {
@@ -126,49 +126,40 @@ namespace YoCoachServer.Models.Repositories
                     {
                         student = context.Student.Where(x => x.Id.Equals(userClient.Id)).Include("User").FirstOrDefault();
                     }
-                    //if the student doesnt exist, register into the aspnetusers table
+                    //if the student doesnt exist, register into the users table
                     if(student == null)
                     {
                         var code = StringHelper.GenerateCode();
-                        student = UserRepository.CreateStudentByCoach(coachId, studentCoach, code);
+                        //student = UserRepository.CreateStudentByCoach(coachId, studentCoach, code);
                         var user = new ApplicationUser()
                         {
                             UserName = studentCoach.PhoneNumber,
-                            PhoneNumber = studentCoach.PhoneNumber,
-                            Name = studentCoach.Name,
-                            Email = studentCoach.Email,
-                            Type = "CL",
-                            Birthday = studentCoach.Birthday,
-                            Student = student
+                            Type = "ST"
                         };
                         var result = await userManager.CreateAsync(user, code);
-                        var roleResult = await userManager.AddToRoleAsync(user.Id, "student");
+                        var roleResult = await userManager.AddToRoleAsync(user.Id, "ST");
 
                         if (result.Succeeded)
                         {
+                            student = new Student();
+                            student.Id = user.Id;
+                            studentCoach.CoachId = coachId;
+                            studentCoach.StudentId = student.Id;
+                            student.StudentCoaches.Add(studentCoach);
+                            context.Student.Add(student);
+                            context.SaveChanges();
                             await SMSHelper.sendSms(studentCoach.PhoneNumber, code);
                             student.User = user;
-                            return student;
+                            return studentCoach;
                         }
-                    }//If the student exists just create a row clientcoach.
+                    }//If the student exists just create a row studentcoach.
                     else
                     {
-                        var oldClientCoach = context.StudentCoach.FirstOrDefault(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(student.Id));
-                        if(oldClientCoach == null)
-                        {
-                            var clientCoach = new StudentCoach()
-                            {
-                                CoachId = coachId,
-                                Student = student,
-                                Name = studentCoach.Name,
-                                Code = studentCoach.Code,
-                                IsExpired = false,
-                                StudentType = studentCoach.StudentType
-                            };
-                            context.SaveChanges();
-                        }
+                        studentCoach.CoachId = coachId;
+                        studentCoach.StudentId = student.Id;
+                        context.SaveChanges();
                     }
-                    return student;
+                    return studentCoach;
                 }
             }
             catch (Exception ex)

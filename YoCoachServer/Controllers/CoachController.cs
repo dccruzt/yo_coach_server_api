@@ -13,7 +13,7 @@ using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Controllers
 {
-    [Authorize(Roles = "coach")]
+    [Authorize(Roles = COACH)]
     public class CoachController : BaseApiController
     {
         [HttpPost]

@@ -31,7 +31,7 @@ namespace YoCoachServer.Helpers
             }
             catch (Exception ex)
             {
-                throw;
+                return;
             }
         }
     }

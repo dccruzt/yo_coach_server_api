@@ -27,25 +27,30 @@ namespace YoCoachServer.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
-
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
-
-            if (user == null)
+            try
             {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
-                return;
+                var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+
+                ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
+
+                if (user == null)
+                {
+                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    return;
+                }
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
+                ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
+
+                AuthenticationProperties properties = CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Birthday.HasValue ? user.Birthday.Value : new DateTimeOffset()), user.PhoneNumber, (user.Picture == null) ? "" : user.Picture.ToString());
+                AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
+                context.Validated(ticket);
+                context.Request.Context.Authentication.SignIn(cookiesIdentity);
             }
-
-            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
-               OAuthDefaults.AuthenticationType);
-            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
-                CookieAuthenticationDefaults.AuthenticationType);
-
-            AuthenticationProperties properties = CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Birthday.HasValue ? user.Birthday.Value.ToString() : ""), user.PhoneNumber, (user.Picture == null) ? "" : user.Picture.ToString());
-            AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
-            context.Validated(ticket);
-            context.Request.Context.Authentication.SignIn(cookiesIdentity);
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
@@ -84,17 +89,16 @@ namespace YoCoachServer.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(string id, string type, string userName, string name, string email, string age, string phoneNumber, string picture)
+        public static AuthenticationProperties CreateProperties(string id, string type, string userName, string name, string email, DateTimeOffset birthday, string phoneNumber, string picture)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
                 { "id", id },
                 { "type", type },
                 { "user_name", userName },
-                { "phone_number", phoneNumber },
                 { "name", name },
                 { "email", (email == null) ? "" : email },
-                { "age", age.ToString() },
+                { "birthday", birthday.ToString() },
                 { "picture", picture }
             };
             return new AuthenticationProperties(data);

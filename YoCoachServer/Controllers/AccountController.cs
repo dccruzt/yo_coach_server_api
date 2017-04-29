@@ -55,6 +55,49 @@ namespace YoCoachServer.Controllers
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
+        // POST api/Account/Register
+        [AllowAnonymous]
+        [Route("Register")]
+        public async Task<IHttpActionResult> Register(RegisterBindingModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
+                }
+
+                var user = new ApplicationUser()
+                {
+                    UserName = model.PhoneNumber,
+                    Name = model.Name,
+                    Type = COACH,
+                    //Coach = coach
+                };
+
+                var userResult = await UserManager.CreateAsync(user, model.Password);
+                if (!userResult.Succeeded)
+                {
+                    return Content(HttpStatusCode.BadRequest,
+                       new ErrorResult(ErrorHelper.ACCOUNT_ERROR, ErrorHelper.GetIdentityErrors(userResult)));
+                }
+                YoCoachServerContext context = new YoCoachServerContext();
+                var coach = UserRepository.CreateCoach(user.Id);
+                context.Coach.Add(coach);
+                context.SaveChanges();
+                coach.User = user;
+
+                var roleResult = await UserManager.AddToRoleAsync(user.Id, COACH);
+                return Ok(coach);
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
+            }
+        }
+
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("UserInfo")]
@@ -268,7 +311,7 @@ namespace YoCoachServer.Controllers
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Birthday.HasValue ? user.Birthday.Value.ToString() : ""), user.PhoneNumber, user.Picture.ToString());
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.Id, user.Type, user.UserName, user.Name, user.Email, (user.Birthday.HasValue ? user.Birthday.Value : new DateTimeOffset()), user.PhoneNumber, user.Picture.ToString());
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else
@@ -320,59 +363,6 @@ namespace YoCoachServer.Controllers
             }
 
             return logins;
-        }
-
-        // POST api/Account/Register
-        [AllowAnonymous]
-        [Route("Register")]
-        public async Task<IHttpActionResult> Register(RegisterBindingModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return Content(HttpStatusCode.BadRequest,
-                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
-                }
-
-                Coach coach = null;
-                Student student = null;
-
-                if (model.Type.Equals("CO"))
-                {
-                    coach = UserRepository.CreateUserCoach();
-
-                }
-                if (model.Type.Equals("CL"))
-                {
-                    student = UserRepository.CreateUserClient();
-                }
-
-                var user = new ApplicationUser()
-                {
-                    UserName = model.PhoneNumber,
-                    PhoneNumber = model.PhoneNumber,
-                    Name = model.Name,
-                    Type = model.Type,
-                    Coach = coach,
-                    Student = student
-                };
-
-                var userResult = await UserManager.CreateAsync(user, model.Password);
-                var roleResult = await UserManager.AddToRoleAsync(user.Id, "coach");
-
-                if (userResult.Succeeded)
-                {
-                    return Ok(user);
-                }
-                return Content(HttpStatusCode.BadRequest,
-                       new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
-            }
-            catch (Exception ex)
-            {
-                return Content(HttpStatusCode.InternalServerError,
-                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
-            }
         }
 
         // POST api/Account/RegisterExternal

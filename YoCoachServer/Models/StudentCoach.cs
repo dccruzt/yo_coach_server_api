@@ -25,18 +25,23 @@ namespace YoCoachServer.Models
         
         public DateTimeOffset? Birthday { get; set; }
 
+        [JsonIgnore]
         public string Code { get; set; }
 
+        [JsonIgnore]
         [JsonProperty("is_expired")]
         public bool? IsExpired { get; set; }
 
-        [JsonProperty("client_type")]
+        [JsonProperty("student_type")]
         public StudentType? StudentType { get; set; }
 
         [JsonProperty("phone_number")]
         public String PhoneNumber { get; set; }
 
+        [JsonIgnore]
         public virtual Student Student { get; set; }
+
+        [JsonIgnore]
         public virtual Coach Coach { get; set; }
     }
 }

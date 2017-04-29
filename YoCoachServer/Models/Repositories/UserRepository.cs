@@ -8,13 +8,15 @@ namespace YoCoachServer.Models.Repositories
 {
     public class UserRepository
     {
-        public static Coach CreateUserCoach()
+        public static Coach CreateCoach(String userId)
         {
             try
             {
                 var coach = new Coach()
                 {
-                    //CoachId = user.Id,
+                    Id = userId,
+                    CreatedAt = DateTimeOffset.Now,
+                    UpdateAt = DateTimeOffset.Now,
                     IsVisibleForClients = true,
                     TimeToCancel = 0
                 };

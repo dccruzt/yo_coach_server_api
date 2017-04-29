@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +12,7 @@ namespace YoCoachServer.Helpers
     {
         public static string INVALID_URI = "INVALID_URI";
         public static string INVALID_BODY = "INVALID_BODY";
+        public static string ACCOUNT_ERROR = "ACCOUNT_ERROR";
         public static string DATABASE_ERROR = "DATABASE_ERROR";
         public static string EXCEPTION = "EXCEPTION";
 
@@ -28,6 +30,24 @@ namespace YoCoachServer.Helpers
                         error += modelError.ErrorMessage + ", ";
                     }
                 }
+                return error;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public static String GetIdentityErrors(IdentityResult identityResult)
+        {
+            try
+            {
+                String error = "";
+                foreach (string identityError in identityResult.Errors)
+                {
+                    error += identityError + ", ";
+                }
+
                 return error;
             }
             catch (Exception)

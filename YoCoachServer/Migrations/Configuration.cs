@@ -29,9 +29,9 @@ namespace YoCoachServer.Migrations
             //    );
             //
             //context.Roles.AddOrUpdate(
-            //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "admin" },
-            //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "coach" },
-            //    new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "student" }
+            //    new IdentityRole { Name = "ADMIN" },
+            //    new IdentityRole { Name = "CO" },
+            //    new IdentityRole { Name = "ST" }
             //    );
         }
     }

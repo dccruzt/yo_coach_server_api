@@ -39,7 +39,7 @@ namespace YoCoachServer.Models.Repositories
                         gym.Id = Guid.NewGuid().ToString();
                         gym.Credit = credit;
                         gym.CreatedAt = DateTimeOffset.Now;
-                        gym.UpdateAt = DateTimeOffset.Now;
+                        gym.UpdatedAt = DateTimeOffset.Now;
 
                         coach.Gyms.Add(gym);
                         context.SaveChanges();

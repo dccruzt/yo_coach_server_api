@@ -31,7 +31,7 @@ namespace YoCoachServer.Models.Repositories
                         schedule.PaymentState = StatePayment.PENDING;
                         schedule.ScheduleState = ScheduleState.SCHEDULED;
                         schedule.CreatedAt = DateTimeOffset.Now;
-                        schedule.UpdateAt = DateTimeOffset.Now;
+                        schedule.UpdatedAt = DateTimeOffset.Now;
                         schedule.Coach = coach;
                         schedule.Students.Add(student);
                         schedule.Gym = gym;
@@ -75,7 +75,7 @@ namespace YoCoachServer.Models.Repositories
                     {
                         //Change the schedule state
                         schedule.ScheduleState = ScheduleState.COMPLETED;
-                        schedule.UpdateAt = DateTimeOffset.Now;
+                        schedule.UpdatedAt = DateTimeOffset.Now;
 
                         //Verify if the schedule has gym
                         if (schedule.Gym != null)
@@ -123,7 +123,7 @@ namespace YoCoachServer.Models.Repositories
                     var schedule = context.Schedule.Where(x => x.Id.Equals(model.ScheduleId)).Include("StudentDebit").Include("Students").FirstOrDefault();
                     if(schedule != null)
                     {
-                        schedule.UpdateAt = DateTimeOffset.Now;
+                        schedule.UpdatedAt = DateTimeOffset.Now;
                         //if not exist a previous payment
                         if(schedule.StudentDebit == null)
                         {

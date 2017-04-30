@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using YoCoachServer.Helpers;
@@ -25,7 +26,7 @@ namespace YoCoachServer.Models.Repositories
                     schedule.Id = Guid.NewGuid().ToString();
                     schedule.CoachId = coach.Id;
                     schedule.CreatedAt = DateTimeOffset.Now;
-                    schedule.UpdateAt = DateTimeOffset.Now;
+                    schedule.UpdatedAt = DateTimeOffset.Now;
                     schedule.IsConfirmed = true;
                     schedule.PaymentState = StatePayment.PENDING;
                     schedule.ScheduleState = ScheduleState.SCHEDULED;
@@ -113,50 +114,74 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task<StudentCoach> RegisterStudent(string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
+        public async static Task<Object> RegisterStudent(string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    //Check if the user exists
-                    Student student = null;
-                    ApplicationUser userClient = await userManager.FindByNameAsync(studentCoach.PhoneNumber);
-                    if(userClient != null)
-                    {
-                        student = context.Student.Where(x => x.Id.Equals(userClient.Id)).Include("User").FirstOrDefault();
-                    }
-                    //if the student doesnt exist, register into the users table
-                    if(student == null)
+                    // check if the user exists
+                    var user = context.Users.FirstOrDefault(x => x.UserName.Equals(studentCoach.PhoneNumber));
+
+                    // if the student doesnt exist, register into the users, students and studentCoach tables
+                    if (user == null)
                     {
                         var code = StringHelper.GenerateCode();
-                        //student = UserRepository.CreateStudentByCoach(coachId, studentCoach, code);
-                        var user = new ApplicationUser()
+                        user = new ApplicationUser()
                         {
                             UserName = studentCoach.PhoneNumber,
                             Type = "ST"
                         };
-                        var result = await userManager.CreateAsync(user, code);
-                        var roleResult = await userManager.AddToRoleAsync(user.Id, "ST");
 
+                        var result = await userManager.CreateAsync(user, code);
                         if (result.Succeeded)
                         {
-                            student = new Student();
+                            var roleResult = await userManager.AddToRoleAsync(user.Id, "ST");
+                            var student = new Student();
                             student.Id = user.Id;
+                            student.CreatedAt = DateTime.Now;
+                            student.UpdatedAt = DateTime.Now;
+                            student.CodeCreatedAt = DateTime.Now;
+                            student.AllowLoginWithCode = true;
+                            student.Code = code;
                             studentCoach.CoachId = coachId;
                             studentCoach.StudentId = student.Id;
+                            studentCoach.CreatedAt = DateTime.Now;
+                            studentCoach.UpdatedAt = DateTime.Now;
                             student.StudentCoaches.Add(studentCoach);
                             context.Student.Add(student);
                             context.SaveChanges();
                             await SMSHelper.sendSms(studentCoach.PhoneNumber, code);
+
                             student.User = user;
                             return studentCoach;
                         }
-                    }//If the student exists just create a row studentcoach.
+                    }
                     else
                     {
+                        // check if the coach already has the student registered
+                        var oldStudent = context.StudentCoach.Where(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(user.Id)).ToList();
+                        if (oldStudent != null && oldStudent.Count > 0)
+                        {
+                            IDictionary<string, string> error = new Dictionary<string, string>
+                            {
+                                { "code", ErrorHelper.EXISTING_USER },
+                                { "message", ErrorHelper.INFO_EXISTING_USER }
+                            };
+                            return error;
+                        }
+                        // check the user role, remaining that must be added only users with student profile
+                        if (user.Type.Equals("CO"))
+                        {
+                            IDictionary<string, string> error = new Dictionary<string, string>
+                            {
+                                { "code", ErrorHelper.INVALID_ROL },
+                                { "message", ErrorHelper.INFO_INVALID_ROL }
+                            };
+                            return error;
+                        }
                         studentCoach.CoachId = coachId;
-                        studentCoach.StudentId = student.Id;
+                        studentCoach.StudentId = user.Id;
                         context.SaveChanges();
                     }
                     return studentCoach;

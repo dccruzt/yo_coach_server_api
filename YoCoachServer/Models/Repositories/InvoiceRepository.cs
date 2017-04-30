@@ -16,7 +16,7 @@ namespace YoCoachServer.Models.Repositories
                 {
                     Id = Guid.NewGuid().ToString(),
                     CreatedAt = DateTimeOffset.Now,
-                    UpdateAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeOffset.Now,
                     AmountExpend = amountExpend
                 };
                 return invoice;
@@ -35,7 +35,7 @@ namespace YoCoachServer.Models.Repositories
                 {
                     Id = Guid.NewGuid().ToString(),
                     CreatedAt = DateTimeOffset.Now,
-                    UpdateAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeOffset.Now,
                     AmountExpend = amountExpend,
                     PaidAt = DateTimeOffset.Now
                 };

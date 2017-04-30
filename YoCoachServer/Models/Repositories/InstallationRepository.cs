@@ -46,7 +46,7 @@ namespace YoCoachServer.Models.Repositories
                     installation.Id = Guid.NewGuid().ToString();
                     installation.Enabled = true;
                     installation.CreatedAt = DateTime.Now;
-                    installation.UpdateAt = DateTime.Now;
+                    installation.UpdatedAt = DateTime.Now;
 
                     context.Installation.Add(installation);
                     context.SaveChanges();

@@ -26,7 +26,7 @@ namespace YoCoachServer.Models
 
         [JsonIgnore]
         [JsonProperty("code_to_access")]
-        public string CodeToAccess { get; set; }
+        public string Code { get; set; }
 
         [JsonIgnore]
         [JsonProperty("code_created_at")]

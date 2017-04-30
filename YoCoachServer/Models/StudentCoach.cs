@@ -9,7 +9,7 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models
 {
-    public class StudentCoach
+    public class StudentCoach : YoCoachObject
     {
         [JsonProperty("Id")]
         [Key, Column(Order = 0)]
@@ -24,13 +24,6 @@ namespace YoCoachServer.Models
         public string Email { get; set; }
         
         public DateTimeOffset? Birthday { get; set; }
-
-        [JsonIgnore]
-        public string Code { get; set; }
-
-        [JsonIgnore]
-        [JsonProperty("is_expired")]
-        public bool? IsExpired { get; set; }
 
         [JsonProperty("student_type")]
         public StudentType? StudentType { get; set; }

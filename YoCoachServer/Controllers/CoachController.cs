@@ -88,10 +88,19 @@ namespace YoCoachServer.Controllers
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
 
-                var student = await CoachRepository.RegisterStudent(CurrentUser.Id, studentCoach, UserManager);
-                if(student != null)
+                var result = await CoachRepository.RegisterStudent(CurrentUser.Id, studentCoach, UserManager);
+                if(result != null)
                 {
-                    return Ok(student);
+                    if (result is StudentCoach)
+                    {
+                        return Ok(result);
+                    }
+                    else if (result is IDictionary<string, string>)
+                    {
+                        var error = (IDictionary<string, string>)result;
+                        return Content(HttpStatusCode.BadRequest,
+                            new ErrorResult(error["code"], error["message"]));
+                    }
                 }
 
                 return Content(HttpStatusCode.BadRequest,

@@ -16,7 +16,7 @@ namespace YoCoachServer.Models.Repositories
                 {
                     Id = userId,
                     CreatedAt = DateTimeOffset.Now,
-                    UpdateAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeOffset.Now,
                     IsVisibleForClients = true,
                     TimeToCancel = 0
                 };
@@ -35,7 +35,7 @@ namespace YoCoachServer.Models.Repositories
                 var client = new Student()
                 {
                     CreatedAt = DateTimeOffset.Now,
-                    UpdateAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeOffset.Now,
 
                 };
                 return client;
@@ -55,8 +55,6 @@ namespace YoCoachServer.Models.Repositories
                 {
                     CoachId = coachId,
                     Name = studentCoach.Name,
-                    Code = studentCoach.Code,
-                    IsExpired = false,
                     StudentType = studentCoach.StudentType
                 };
                 StudentCoachList.Add(clientCoach);
@@ -64,9 +62,9 @@ namespace YoCoachServer.Models.Repositories
                 var client = new Student()
                 {
                     CreatedAt = DateTimeOffset.Now,
-                    UpdateAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeOffset.Now,
                     AllowLoginWithCode = true,
-                    CodeToAccess = code,
+                    Code = code,
                     CodeCreatedAt = DateTimeOffset.Now,
                     StudentCoaches = StudentCoachList
 

@@ -95,11 +95,9 @@ namespace YoCoachServer.Controllers
                     {
                         return Ok(result);
                     }
-                    else if (result is IDictionary<string, string>)
+                    else if (result is ErrorResult)
                     {
-                        var error = (IDictionary<string, string>)result;
-                        return Content(HttpStatusCode.BadRequest,
-                            new ErrorResult(error["code"], error["message"]));
+                        return Content(HttpStatusCode.BadRequest, result);
                     }
                 }
 

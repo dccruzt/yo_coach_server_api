@@ -113,6 +113,7 @@ namespace YoCoachServer.Models
             //modelBuilder.Entity<StudentDebit>().HasRequired(m => m.Schedule).WithOptional(m => m.StudentDebit);
 
             modelBuilder.Entity<ApplicationUser>().ToTable("User")
+                .Ignore(c => c.EmailConfirmed)
                 .Ignore(c => c.PhoneNumber)
                 .Ignore(c => c.PhoneNumberConfirmed)
                 .Ignore(c => c.TwoFactorEnabled)

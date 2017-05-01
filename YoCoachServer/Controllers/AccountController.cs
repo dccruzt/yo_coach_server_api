@@ -67,29 +67,18 @@ namespace YoCoachServer.Controllers
                     return Content(HttpStatusCode.BadRequest,
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-
-                var user = new ApplicationUser()
+                var context = Request.GetOwinContext().Get<YoCoachServerContext>();
+                var result = await UserRepository.RegisterCoach(model, UserManager, context);
+                if(result is Coach)
                 {
-                    UserName = model.PhoneNumber,
-                    Name = model.Name,
-                    Type = COACH,
-                    //Coach = coach
-                };
-
-                var userResult = await UserManager.CreateAsync(user, model.Password);
-                if (!userResult.Succeeded)
+                    return Ok(result);
+                }else if(result is ErrorResult)
                 {
-                    return Content(HttpStatusCode.BadRequest,
-                       new ErrorResult(ErrorHelper.ACCOUNT_ERROR, ErrorHelper.GetIdentityErrors(userResult)));
+                    return Content(HttpStatusCode.BadRequest, result);
                 }
-                YoCoachServerContext context = new YoCoachServerContext();
-                var coach = UserRepository.CreateCoach(user.Id);
-                context.Coach.Add(coach);
-                context.SaveChanges();
-                coach.User = user;
+                return Content(HttpStatusCode.BadRequest,
+                    new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
 
-                var roleResult = await UserManager.AddToRoleAsync(user.Id, COACH);
-                return Ok(coach);
             }
             catch (Exception ex)
             {

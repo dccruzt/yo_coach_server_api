@@ -10,6 +10,7 @@ namespace YoCoachServer.Helpers
 {
     public class ErrorHelper
     {
+        public static string INVALID_LOGIN = "INVALID_LOGIN";
         public static string INVALID_URI = "INVALID_URI";
         public static string INVALID_BODY = "INVALID_BODY";
         public static string INVALID_ROL = "INVALID_ROL";
@@ -18,6 +19,7 @@ namespace YoCoachServer.Helpers
         public static string EXISTING_USER = "EXISTING_USER";
         public static string EXCEPTION = "EXCEPTION";
 
+        public static string INFO_INVALID_LOGIN = "The user name or password is incorrect.";
         public static string INFO_DATABASE_ERROR = "Some error ocurred with the server or database, please try again.";
         public static string INFO_INVALID_ROL = "The user can not be added because has a profile with no permissions.";
         public static string INFO_EXISTING_USER = "The user can not be added because already was registred by the same coach.";

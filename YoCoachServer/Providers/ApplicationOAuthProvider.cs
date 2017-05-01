@@ -8,6 +8,8 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using YoCoachServer.Models;
+using System.Net;
+using YoCoachServer.Helpers;
 
 namespace YoCoachServer.Providers
 {
@@ -35,7 +37,9 @@ namespace YoCoachServer.Providers
 
                 if (user == null)
                 {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    string errorString = JsonHelper.serializeObject(new ErrorResult(ErrorHelper.INVALID_LOGIN, ErrorHelper.INFO_INVALID_LOGIN));
+                    //context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    context.Response.Write(errorString);
                     return;
                 }
 
@@ -49,6 +53,8 @@ namespace YoCoachServer.Providers
             }
             catch (Exception ex)
             {
+                string errorString = JsonHelper.serializeObject(new ErrorResult(ErrorHelper.EXCEPTION, ex.Message));
+                context.Response.Write(errorString);
                 throw;
             }
         }

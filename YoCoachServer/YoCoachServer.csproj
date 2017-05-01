@@ -273,6 +273,7 @@
     <Compile Include="Models\BindingModels\ClientBindingModels.cs" />
     <Compile Include="Models\BindingModels\CoachBindingModels.cs" />
     <Compile Include="Models\BindingModels\ScheduleBindingModels.cs" />
+    <Compile Include="Models\Repositories\BaseRepository.cs" />
     <Compile Include="Models\StudentCoach.cs" />
     <Compile Include="Models\Credit.cs" />
     <Compile Include="Models\Enums\YoCoachEnum.cs" />

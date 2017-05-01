@@ -14,7 +14,7 @@ using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
 {
-    public class CoachRepository
+    public class CoachRepository : BaseRepository
     {
 
         public static Schedule SaveSchedule(ApplicationUser coach, Schedule schedule)
@@ -130,13 +130,13 @@ namespace YoCoachServer.Models.Repositories
                         user = new ApplicationUser()
                         {
                             UserName = studentCoach.PhoneNumber,
-                            Type = "ST"
+                            Type = STUDENT
                         };
 
                         var result = await userManager.CreateAsync(user, code);
                         if (result.Succeeded)
                         {
-                            var roleResult = await userManager.AddToRoleAsync(user.Id, "ST");
+                            var roleResult = await userManager.AddToRoleAsync(user.Id, STUDENT);
                             var student = new Student();
                             student.Id = user.Id;
                             student.CreatedAt = DateTime.Now;
@@ -163,25 +163,17 @@ namespace YoCoachServer.Models.Repositories
                         var oldStudent = context.StudentCoach.Where(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(user.Id)).ToList();
                         if (oldStudent != null && oldStudent.Count > 0)
                         {
-                            IDictionary<string, string> error = new Dictionary<string, string>
-                            {
-                                { "code", ErrorHelper.EXISTING_USER },
-                                { "message", ErrorHelper.INFO_EXISTING_USER }
-                            };
-                            return error;
+                            return new ErrorResult(ErrorHelper.EXISTING_USER, ErrorHelper.INFO_EXISTING_USER);
                         }
                         // check the user role, remaining that must be added only users with student profile
-                        if (user.Type.Equals("CO"))
+                        if (!user.Type.Equals(STUDENT))
                         {
-                            IDictionary<string, string> error = new Dictionary<string, string>
-                            {
-                                { "code", ErrorHelper.INVALID_ROL },
-                                { "message", ErrorHelper.INFO_INVALID_ROL }
-                            };
-                            return error;
+                            return new ErrorResult(ErrorHelper.INVALID_ROL, ErrorHelper.INFO_INVALID_ROL);
                         }
                         studentCoach.CoachId = coachId;
                         studentCoach.StudentId = user.Id;
+                        studentCoach.UpdatedAt = DateTime.Now;
+                        context.StudentCoach.Add(studentCoach);
                         context.SaveChanges();
                     }
                     return studentCoach;

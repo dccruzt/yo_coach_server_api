@@ -65,17 +65,26 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Student CreateUserClient()
+        public static Student CreateStudentAndStudentCoach(StudentCoach studentCoach, string code, string coachId, string userId)
         {
             try
             {
-                var client = new Student()
-                {
-                    CreatedAt = DateTimeOffset.Now,
-                    UpdatedAt = DateTimeOffset.Now,
+                studentCoach.CoachId = coachId;
+                studentCoach.StudentId = userId;
+                studentCoach.CreatedAt = DateTime.Now;
+                studentCoach.UpdatedAt = DateTime.Now;
 
+                var student = new Student()
+                {
+                    Id = userId,
+                    Code = code,
+                    AllowLoginWithCode = true,
+                    CodeCreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
-                return client;
+                student.StudentCoaches.Add(studentCoach);
+                return student;
             }
             catch (Exception ex)
             {
@@ -83,30 +92,15 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Student CreateStudentByCoach(string coachId, StudentCoach studentCoach, string code)
+        public static StudentCoach CreateStudentCoach(StudentCoach studentCoach, string coachId, string userId)
         {
             try
             {
-                var StudentCoachList = new List<StudentCoach>();
-                var clientCoach = new StudentCoach()
-                {
-                    CoachId = coachId,
-                    Name = studentCoach.Name,
-                    StudentType = studentCoach.StudentType
-                };
-                StudentCoachList.Add(clientCoach);
-
-                var client = new Student()
-                {
-                    CreatedAt = DateTimeOffset.Now,
-                    UpdatedAt = DateTimeOffset.Now,
-                    AllowLoginWithCode = true,
-                    Code = code,
-                    CodeCreatedAt = DateTimeOffset.Now,
-                    StudentCoaches = StudentCoachList
-
-                };
-                return client;
+                studentCoach.CoachId = coachId;
+                studentCoach.StudentId = userId;
+                studentCoach.CreatedAt = DateTime.Now;
+                studentCoach.UpdatedAt = DateTime.Now;
+                return studentCoach;
             }
             catch (Exception ex)
             {

@@ -44,9 +44,8 @@ namespace YoCoachServer.Models.BindingModels
         public string Password { get; set; }
 
         [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 1)]
         public string Name { get; set; }
-        
-        public string Type { get; set; }
     }
 
     public class RegisterExternalBindingModel

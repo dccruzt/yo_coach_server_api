@@ -114,11 +114,11 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public async static Task<Object> RegisterStudent(string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
+        public async static Task<Object> RegisterStudent(YoCoachServerContext context, string coachId, StudentCoach studentCoach, ApplicationUserManager userManager)
         {
-            try
+            using (var transaction = context.Database.BeginTransaction())
             {
-                using (var context = new YoCoachServerContext())
+                try
                 {
                     // check if the user exists
                     var user = context.Users.FirstOrDefault(x => x.UserName.Equals(studentCoach.PhoneNumber));
@@ -132,56 +132,41 @@ namespace YoCoachServer.Models.Repositories
                             UserName = studentCoach.PhoneNumber,
                             Type = STUDENT
                         };
-
                         var result = await userManager.CreateAsync(user, code);
                         if (result.Succeeded)
                         {
                             var roleResult = await userManager.AddToRoleAsync(user.Id, STUDENT);
-                            var student = new Student();
-                            student.Id = user.Id;
-                            student.CreatedAt = DateTime.Now;
-                            student.UpdatedAt = DateTime.Now;
-                            student.CodeCreatedAt = DateTime.Now;
-                            student.AllowLoginWithCode = true;
-                            student.Code = code;
-                            studentCoach.CoachId = coachId;
-                            studentCoach.StudentId = student.Id;
-                            studentCoach.CreatedAt = DateTime.Now;
-                            studentCoach.UpdatedAt = DateTime.Now;
-                            student.StudentCoaches.Add(studentCoach);
+                            var student = UserRepository.CreateStudentAndStudentCoach(studentCoach, code, coachId, user.Id);
                             context.Student.Add(student);
                             context.SaveChanges();
-                            await SMSHelper.sendSms(studentCoach.PhoneNumber, code);
+                            transaction.Commit();
 
-                            student.User = user;
+                            await SMSHelper.sendSms(studentCoach.PhoneNumber, code);
                             return studentCoach;
                         }
                     }
-                    else
+                    // check if the coach already has the student registered
+                    var oldStudent = context.StudentCoach.Where(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(user.Id)).ToList();
+                    if (oldStudent != null && oldStudent.Count > 0)
                     {
-                        // check if the coach already has the student registered
-                        var oldStudent = context.StudentCoach.Where(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(user.Id)).ToList();
-                        if (oldStudent != null && oldStudent.Count > 0)
-                        {
-                            return new ErrorResult(ErrorHelper.EXISTING_USER, ErrorHelper.INFO_EXISTING_USER);
-                        }
-                        // check the user role, remaining that must be added only users with student profile
-                        if (!user.Type.Equals(STUDENT))
-                        {
-                            return new ErrorResult(ErrorHelper.INVALID_ROL, ErrorHelper.INFO_INVALID_ROL);
-                        }
-                        studentCoach.CoachId = coachId;
-                        studentCoach.StudentId = user.Id;
-                        studentCoach.UpdatedAt = DateTime.Now;
-                        context.StudentCoach.Add(studentCoach);
-                        context.SaveChanges();
+                        return new ErrorResult(ErrorHelper.EXISTING_USER, ErrorHelper.INFO_EXISTING_USER);
                     }
+                    // check the user role, remaining that must be added only users with student profile
+                    if (!user.Type.Equals(STUDENT))
+                    {
+                        return new ErrorResult(ErrorHelper.INVALID_ROL, ErrorHelper.INFO_INVALID_ROL);
+                    }
+                    studentCoach = UserRepository.CreateStudentCoach(studentCoach, coachId, user.Id);
+                    context.StudentCoach.Add(studentCoach);
+                    context.SaveChanges();
+                    transaction.Commit();
                     return studentCoach;
                 }
-            }
-            catch (Exception ex)
-            {
-                throw;
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ex.Message);
+                }
             }
         }
 

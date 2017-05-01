@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -87,8 +88,9 @@ namespace YoCoachServer.Controllers
                     return Content(HttpStatusCode.BadRequest,
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-
-                var result = await CoachRepository.RegisterStudent(CurrentUser.Id, studentCoach, UserManager);
+                
+                var context = Request.GetOwinContext().Get<YoCoachServerContext>();
+                var result = await CoachRepository.RegisterStudent(context, CurrentUser.Id, studentCoach, UserManager);
                 if(result != null)
                 {
                     if (result is StudentCoach)

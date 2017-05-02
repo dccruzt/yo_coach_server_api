@@ -30,13 +30,14 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult ListSchedules(ListSchedulesBindingModel model)
+        [HttpGet]
+        public IHttpActionResult ListSchedules(String date = null)
         {
             try
             {
                 if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
                 {
-                    var schedules = StudentRepository.ListSchedules(model.coachId);
+                    var schedules = StudentRepository.ListSchedules(date);
                     return Ok(schedules);
                 }
                 return BadRequest();

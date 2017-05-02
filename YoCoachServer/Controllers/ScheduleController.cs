@@ -19,7 +19,7 @@ namespace YoCoachServer.Controllers
     public class ScheduleController : BaseApiController
     {
         [HttpPost]
-        public IHttpActionResult MarkAsCompleted(Schedule schedule)
+        public IHttpActionResult MarkAsCompleted(ScheduleTransactionBindingModel model)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace YoCoachServer.Controllers
                     return Content(HttpStatusCode.BadRequest,
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-                var result = ScheduleRepository.MarkAsCompleted(schedule.Id, schedule.CreditsAmount);
+                var result = ScheduleRepository.MarkAsCompleted(model.Id, model.CreditsAmount);
                 if (result is Schedule)
                 {
                     return Ok(result);
@@ -42,37 +42,12 @@ namespace YoCoachServer.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
-                throw;
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 
-        //public IHttpActionResult MarkAsCompleted(ScheduleDetailBindingModel model)
-        //{
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return BadRequest(ModelState);
-        //        }
-        //        if(CurrentUser != null && CurrentUser.Type.Equals("CO"))
-        //        {
-        //            var schedule = ScheduleRepository.MarkAsCompleted(CurrentUser.Id, model);
-        //            if (schedule != null)
-        //            {
-        //                return Ok(schedule);
-        //            }
-        //        }
-        //        return InternalServerError();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return InternalServerError(ex);
-        //        throw;
-        //    }
-        //}
-
-        public IHttpActionResult ReceivePayment(ScheduleDetailBindingModel model)
+        public IHttpActionResult ReceivePayment(ScheduleTransactionBindingModel model)
         {
             try
             {

@@ -13,7 +13,6 @@ namespace YoCoachServer.Models
         public string Name { get; set; }
         public string Address { get; set; }
 
-
         [JsonIgnore]
         public virtual Coach Coach { get; set; }
 

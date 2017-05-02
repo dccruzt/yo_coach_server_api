@@ -28,7 +28,7 @@ namespace YoCoachServer.Models.Repositories
                     var result = await userManager.CreateAsync(user, model.Password);
                     if (!result.Succeeded)
                     {
-                        return new ErrorResult(ErrorHelper.ACCOUNT_ERROR, ErrorHelper.GetIdentityErrors(result));
+                        return new ErrorResult(ErrorHelper.INVALID_ACCOUNT, ErrorHelper.GetIdentityErrors(result));
                     }
                     var roleResult = await userManager.AddToRoleAsync(user.Id, COACH);
                     var coach = CreateCoach(user);
@@ -40,7 +40,7 @@ namespace YoCoachServer.Models.Repositories
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ex.Message);
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ex.StackTrace);
                 }
             }
         }

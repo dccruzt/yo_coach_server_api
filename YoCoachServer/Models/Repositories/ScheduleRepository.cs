@@ -39,7 +39,7 @@ namespace YoCoachServer.Models.Repositories
 
                         context.SaveChanges();
 
-                        var installations = CoachRepository.getInstallations(schedule.Coach);
+                        var installations = InstallationRepository.getInstallations(schedule.Coach.Id);
                         if(installations != null)
                         {
                             foreach(var installation in installations)
@@ -114,13 +114,13 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Schedule ReceivePayment(string coachId, ScheduleDetailBindingModel model)
+        public static Schedule ReceivePayment(string coachId, ScheduleTransactionBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.Where(x => x.Id.Equals(model.ScheduleId)).Include("StudentDebit").Include("Students").FirstOrDefault();
+                    var schedule = context.Schedule.Where(x => x.Id.Equals(model.Id)).Include("StudentDebit").Include("Students").FirstOrDefault();
                     if(schedule != null)
                     {
                         schedule.UpdatedAt = DateTimeOffset.Now;
@@ -129,9 +129,9 @@ namespace YoCoachServer.Models.Repositories
                         {
                             if (schedule.Students != null && schedule.Students.Count != 0)
                             {
-                                var clientDebit = CreditRepository.createClientDebit(schedule.Students.First(), model.AmountExpend);
+                                var clientDebit = CreditRepository.createClientDebit(schedule.Students.First(), model.CreditsAmount);
                                 schedule.StudentDebit = clientDebit;
-                                var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
+                                var invoice = InvoiceRepository.createInvoiceForClientDebit(model.CreditsAmount);
                                 schedule.StudentDebit.Balance.Invoices.Add(invoice);
                             }
                         }
@@ -143,8 +143,8 @@ namespace YoCoachServer.Models.Repositories
                                 var balance = context.Credit.Where(x => x.Id.Equals(clientDebit.Balance.Id)).Include("Invoices").FirstOrDefault();
                                 if(balance != null)
                                 {
-                                    balance.Amount += model.AmountExpend;
-                                    var invoice = InvoiceRepository.createInvoiceForClientDebit(model.AmountExpend);
+                                    balance.Amount += model.CreditsAmount;
+                                    var invoice = InvoiceRepository.createInvoiceForClientDebit(model.CreditsAmount);
                                     balance.Invoices.Add(invoice);
                                 }
                             }

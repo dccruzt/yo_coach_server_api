@@ -11,7 +11,7 @@ namespace YoCoachServer.Models.Repositories
         public const string COACH = "CO";
         public const string STUDENT = "ST";
 
-
+        public const string USER = "User";
         public const string GYM = "Gym";
         public const string CREDIT = "Credit";
         public const string INVOICES = "Invoices";

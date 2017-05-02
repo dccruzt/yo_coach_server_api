@@ -77,14 +77,5 @@ namespace YoCoachServer.Models.BindingModels
             [Required]
             public Credit Credit { get; set; }
         }
-
-        public class ScheduleDetailBindingModel
-        {
-            [JsonProperty("schedule_id")]
-            public string ScheduleId { get; set; }
-
-            [JsonProperty("amount_expend")]
-            public double AmountExpend { get; set; }
-        }
     }
 }

@@ -156,7 +156,7 @@ namespace YoCoachServer.Models.Repositories
                     var oldStudent = context.StudentCoach.Where(x => x.CoachId.Equals(coachId) && x.StudentId.Equals(user.Id)).ToList();
                     if (oldStudent != null && oldStudent.Count > 0)
                     {
-                        return new ErrorResult(ErrorHelper.EXISTING_USER, ErrorHelper.INFO_EXISTING_USER);
+                        return new ErrorResult(ErrorHelper.INVALID_USER, ErrorHelper.INFO_INVALID_USER);
                     }
                     // check the user role, remaining that must be added only users with student profile
                     if (!user.Type.Equals(STUDENT))
@@ -172,24 +172,8 @@ namespace YoCoachServer.Models.Repositories
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ex.Message);
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ex.StackTrace);
                 }
-            }
-        }
-
-        public static List<Installation> getInstallations(Coach coach)
-        {
-            try
-            {
-                using (var context = new YoCoachServerContext())
-                {
-                    var installations = context.Installation.Where(x => x.User.Id.Equals(coach.Id)).ToList();
-                    return installations;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
             }
         }
     }

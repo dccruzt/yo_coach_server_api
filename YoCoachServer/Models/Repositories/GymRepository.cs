@@ -8,7 +8,7 @@ using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
 {
-    public class GymRepository
+    public class GymRepository : BaseRepository
     {
         public static List<Gym> ListGyms(string coachId)
         {
@@ -16,7 +16,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    return context.Gym.Where(x => x.Coach.Id.Equals(coachId)).Include("Credit").ToList();
+                    return context.Gym.Where(x => x.Coach.Id.Equals(coachId)).Include(CREDIT).ToList();
                 }
             }
             catch (Exception ex)

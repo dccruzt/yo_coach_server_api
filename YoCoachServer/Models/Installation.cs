@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using YoCoachServer.Models.Enums;
@@ -12,7 +13,7 @@ namespace YoCoachServer.Models
         public String Id { get; set; }
 
         [JsonProperty("device_type")]
-        public DeviceType DeviceType { get; set; }
+        public DeviceType? DeviceType { get; set; }
 
         [JsonProperty("application_version")]
         public String ApplicationVersion { get; set; }
@@ -26,6 +27,9 @@ namespace YoCoachServer.Models
         public String DeviceId { get; set; }
 
         public bool Enabled { get; set; }
+
+        [JsonProperty("user_id")]
+        public string UserId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
     }

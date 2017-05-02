@@ -7,42 +7,24 @@ using YoCoachServer.Models.Enums;
 
 namespace YoCoachServer.Models.Repositories
 {
-    public class InstallationRepository
+    public class InstallationRepository : BaseRepository
     {
-        public static Installation Register(ApplicationUser currentUser, Installation installation)
+        public static Installation Register(string userId, Installation installation)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    ApplicationUser user = null;
-                    if(currentUser.Type.Equals("CO"))
+                    // when is an Android device its necessary disable all the installations the user has.
+                    if(installation.DeviceType.Equals(DeviceType.ANDROID))
                     {
-                        user = context.Coach.Where(x => x.Id.Equals(currentUser.Id)).Include("User").ToList().FirstOrDefault().User;
-                        installation.User = user;
-                    }
-                    else if(currentUser.Type.Equals("CL"))
-                    {
-                        user = context.Student.Where(x => x.Id.Equals(currentUser.Id)).Include("User").ToList().FirstOrDefault().User;
-                        installation.User = user;
-                    }
-
-                    // When is an Android device its necessary disable all the installations the user has.
-                    if(installation.DeviceType.Equals(DeviceType.ANDROID) && user != null)
-                    {
-                        var installations = context.Installation.Where(x => x.User.Id.Equals(user.Id));
-                        if(installations != null)
+                        var installations = context.Installation.Where(x => x.UserId.Equals(userId)).ToList();
+                        foreach (var inst in installations)
                         {
-                            foreach(var inst in installations)
-                            {
-                                if (inst.Enabled)
-                                {
-                                    inst.Enabled = false;
-                                }
-                            }
+                            inst.Enabled = false;
                         }
                     }
-
+                    installation.UserId = userId;
                     installation.Id = Guid.NewGuid().ToString();
                     installation.Enabled = true;
                     installation.CreatedAt = DateTime.Now;
@@ -68,9 +50,25 @@ namespace YoCoachServer.Models.Repositories
                     var installations = new List<Installation>();
                     foreach(Student user in users)
                     {
-                        var installationsByUser = context.Installation.Where(x => x.User.Id.Equals(user.Id)).ToList();
+                        var installationsByUser = context.Installation.Where(x => x.UserId.Equals(user.Id)).ToList();
                         installations.AddRange(installationsByUser);
                     }
+                    return installations;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static List<Installation> getInstallations(string userId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var installations = context.Installation.Where(x => x.UserId.Equals(userId)).ToList();
                     return installations;
                 }
             }

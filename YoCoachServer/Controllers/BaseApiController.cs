@@ -13,9 +13,10 @@ namespace YoCoachServer.Controllers
 {
     public class BaseApiController : ApiController
     {
-        public static String ADMIN = "ADMIN";
+        public const String ADMIN = "ADMIN";
         public const String COACH = "CO";
-        public static String STUDENT = "ST";
+        public const String STUDENT = "ST";
+        public const String COACH_STUDENT = "CO,ST";
 
         private ApplicationUserManager _userManager;
 

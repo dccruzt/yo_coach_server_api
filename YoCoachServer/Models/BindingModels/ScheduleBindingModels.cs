@@ -33,10 +33,13 @@ namespace YoCoachServer.Models.BindingModels
         public Schedule Schedule { get; set; }
     }
 
-    public class ListSchedulesBindingModel
+    public class ScheduleTransactionBindingModel
     {
         [Required]
-        [JsonProperty("coach_id")]
-        public string coachId { get; set; }
+        public string Id { get; set; }
+
+        [Required]
+        [JsonProperty("credits_amount")]
+        public double CreditsAmount { get; set; }
     }
 }

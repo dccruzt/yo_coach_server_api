@@ -17,7 +17,7 @@ namespace YoCoachServer.Models.Repositories
     public class CoachRepository : BaseRepository
     {
 
-        public static Schedule SaveSchedule(ApplicationUser coach, Schedule schedule)
+        public static Object SaveSchedule(ApplicationUser coach, Schedule schedule)
         {
             try
             {
@@ -31,6 +31,7 @@ namespace YoCoachServer.Models.Repositories
                     schedule.PaymentState = StatePayment.PENDING;
                     schedule.ScheduleState = ScheduleState.SCHEDULED;
 
+                    var gym = context.Gym.Find(schedule.GymId);
                     var existingStudents = new List<Student>();
                     foreach (var student in schedule.Students)
                     {
@@ -40,26 +41,32 @@ namespace YoCoachServer.Models.Repositories
                             existingStudents.Add(existingStudent);
                         }
                     }
-                    schedule.Students = existingStudents;
-                    context.Schedule.Add(schedule);
 
-                    context.SaveChanges();
-
-                    var installations = InstallationRepository.getInstallations(schedule.Students.ToList());
-                    if (installations != null)
+                    if (gym != null && existingStudents.Count > 0)
                     {
-                        foreach (var installation in installations)
-                        {
-                            var notification = NotificationRepository.CreateNotificationForSaveSchedule(
-                                installation.DeviceToken,
-                                coach.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
-                                NotificationMessage.NEW_SCHEDULE_BODY,
-                                NotificationType.SAVE_SCHEDULE);
+                        schedule.Gym = gym;
+                        schedule.Students = existingStudents;
+                        context.Schedule.Add(schedule);
 
-                            NotificationHelper.SendNotfication(notification);
+                        context.SaveChanges();
+
+                        var installations = InstallationRepository.getInstallations(schedule.Students.ToList());
+                        if (installations != null)
+                        {
+                            foreach (var installation in installations)
+                            {
+                                var notification = NotificationRepository.CreateNotificationForSaveSchedule(
+                                    installation.DeviceToken,
+                                    coach.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    NotificationMessage.NEW_SCHEDULE_BODY,
+                                    NotificationType.SAVE_SCHEDULE);
+
+                                NotificationHelper.SendNotfication(notification);
+                            }
                         }
+                        return schedule;
                     }
-                    return schedule;
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR);
                 }
             }
             catch (Exception ex)
@@ -74,7 +81,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include("Gym").Include("Students").ToList();
+                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include(GYM).Include(STUDENTS).ToList();
                     if (date != null)
                     {
                         DateTimeOffset filterDate = DateTimeOffset.Parse(date);

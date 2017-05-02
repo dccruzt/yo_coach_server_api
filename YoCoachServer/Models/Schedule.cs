@@ -21,7 +21,7 @@ namespace YoCoachServer.Models
         public String Id { get; set; }
 
         [JsonProperty("start_time")]
-        [CheckDateRange(ErrorMessage = "Value for StartTime must be greater than today.")]
+        //[CheckDateRange(ErrorMessage = "Value for StartTime must be greater than today.")]
         public DateTimeOffset? StartTime { get; set; }
 
         [JsonProperty("end_time")]
@@ -40,14 +40,13 @@ namespace YoCoachServer.Models
         [JsonProperty("schedule_state")]
         public ScheduleState? ScheduleState { get; set; }
 
-        [JsonProperty("credits_quantity")]
-        public double? CreditsQuantity { get; set; }
+        [JsonProperty("credits_amount")]
+        public double? CreditsAmount { get; set; }
 
         [JsonIgnore]
         [JsonProperty("coach_id")]
         public string CoachId { get; set; }
 
-        [JsonIgnore]
         [JsonProperty("gym_id")]
         public string GymId { get; set; }
 

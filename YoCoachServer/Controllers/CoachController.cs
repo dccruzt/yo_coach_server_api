@@ -28,10 +28,14 @@ namespace YoCoachServer.Controllers
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
                 var result = CoachRepository.SaveSchedule(CurrentUser, schedule);
-                if (result != null)
+                if (result is Schedule)
                 {
                     return Ok(result);
+                }else if (result is ErrorResult)
+                {
+                    return Content(HttpStatusCode.BadRequest, result);
                 }
+
                 return Content(HttpStatusCode.BadRequest,
                         new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
             }

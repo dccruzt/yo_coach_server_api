@@ -12,7 +12,7 @@ using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
 namespace YoCoachServer.Models.Repositories
 {
-    public class ScheduleRepository
+    public class ScheduleRepository : BaseRepository
     {
         public static Schedule SaveScheduleByStudent(string clientId, SaveScheduleByClientBindingModel model)
         {
@@ -64,13 +64,13 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Schedule MarkAsCompleted(string coachId, ScheduleDetailBindingModel model)
+        public static Object MarkAsCompleted(string scheduleId, double? creditsAmount)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.Where(x => x.Coach.Id.Equals(coachId) && x.Id.Equals(model.ScheduleId)).Include("Gym").FirstOrDefault();
+                    var schedule = context.Schedule.Where(x => x.Id.Equals(scheduleId)).Include(GYM).FirstOrDefault();
                     if (schedule != null)
                     {
                         //Change the schedule state
@@ -80,32 +80,32 @@ namespace YoCoachServer.Models.Repositories
                         //Verify if the schedule has gym
                         if (schedule.Gym != null)
                         {
-                            var gym = context.Gym.Where(x => x.Id.Equals(schedule.Gym.Id)).Include("Credit").FirstOrDefault();
+                            var gym = context.Gym.Where(x => x.Id.Equals(schedule.Gym.Id)).Include(CREDIT).FirstOrDefault();
                             if(gym != null && gym.Credit != null)
                             {
-                                var credit = context.Credit.Where(x => x.Id.Equals(gym.Credit.Id)).Include("Invoices").FirstOrDefault();
+                                var credit = context.Credit.Where(x => x.Id.Equals(gym.Credit.Id)).Include(INVOICES).FirstOrDefault();
                                 if (credit != null)
                                 {
                                     //Create Invoice for the credit of the gym
-                                    var invoice = InvoiceRepository.createInvoiceForGym(model.AmountExpend);
+                                    var invoice = InvoiceRepository.createInvoiceForGym(creditsAmount);
                                     credit.Invoices.Add(invoice);
 
                                     //Increase the total credit amount
                                     if (credit.Amount.HasValue)
                                     {
-                                        credit.Amount += model.AmountExpend;
+                                        credit.Amount += creditsAmount;
                                     }
                                     else
                                     {
-                                        credit.Amount = model.AmountExpend;
+                                        credit.Amount = creditsAmount;
                                     }
+                                    context.SaveChanges();
+                                    return schedule;
                                 }
                             }
                         }
-                        context.SaveChanges();
-                        return schedule;
                     }
-                    return null;
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR);
                 }
             }
             catch (Exception ex)

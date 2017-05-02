@@ -83,11 +83,11 @@ namespace YoCoachServer.Models.Repositories
                                 {
                                     if (schedule.Gym.Credit.CreditPolicy.Equals(CreditPolicy.PRE))
                                     {
-                                        creditsPreQuantity += schedule.CreditsQuantity;
+                                        creditsPreQuantity += schedule.CreditsAmount;
                                     }
                                     else if (schedule.Gym.Credit.CreditPolicy.Equals(CreditPolicy.POST))
                                     {
-                                        creditsPostQuantity += schedule.CreditsQuantity;
+                                        creditsPostQuantity += schedule.CreditsAmount;
                                     }
                                 }
                             }

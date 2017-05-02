@@ -8,7 +8,7 @@ namespace YoCoachServer.Models.Repositories
 {
     public class InvoiceRepository
     {
-        public static Invoice createInvoiceForGym(double amountExpend)
+        public static Invoice createInvoiceForGym(double? creditsAmount)
         {
             try
             {
@@ -17,7 +17,7 @@ namespace YoCoachServer.Models.Repositories
                     Id = Guid.NewGuid().ToString(),
                     CreatedAt = DateTimeOffset.Now,
                     UpdatedAt = DateTimeOffset.Now,
-                    AmountExpend = amountExpend
+                    CreditsAmount = creditsAmount
                 };
                 return invoice;
             }
@@ -27,7 +27,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Invoice createInvoiceForClientDebit(double amountExpend)
+        public static Invoice createInvoiceForClientDebit(double creditsAmount)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace YoCoachServer.Models.Repositories
                     Id = Guid.NewGuid().ToString(),
                     CreatedAt = DateTimeOffset.Now,
                     UpdatedAt = DateTimeOffset.Now,
-                    AmountExpend = amountExpend,
+                    CreditsAmount = creditsAmount,
                     PaidAt = DateTimeOffset.Now
                 };
                 return invoice;

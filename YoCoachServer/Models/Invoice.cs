@@ -11,8 +11,8 @@ namespace YoCoachServer.Models
         public string Id { get; set; }
         [JsonProperty("paid_at")]
         public DateTimeOffset? PaidAt { get; set; }
-        [JsonProperty("amount_expend")]
-        public double? AmountExpend { get; set; }
+        [JsonProperty("credits_amount")]
+        public double? CreditsAmount { get; set; }
 
         public virtual Credit Credit { get; set; }
     }

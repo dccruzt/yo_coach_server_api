@@ -27,7 +27,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Invoice createInvoiceForClientDebit(double creditsAmount)
+        public static Invoice createInvoiceForStudentPayment(double creditsAmount)
         {
             try
             {

@@ -16,5 +16,6 @@ namespace YoCoachServer.Models.Repositories
         public const string CREDIT = "Credit";
         public const string INVOICES = "Invoices";
         public const string STUDENTS = "Students";
+        public const string STUDENTDEBIT = "StudentPayment";
     }
 }

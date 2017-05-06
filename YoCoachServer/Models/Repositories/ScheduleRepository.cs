@@ -114,45 +114,40 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Schedule ReceivePayment(string coachId, ScheduleTransactionBindingModel model)
+        public static Object ReceivePayment(string coachId, PayScheduleBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = context.Schedule.Where(x => x.Id.Equals(model.Id)).Include("StudentDebit").Include("Students").FirstOrDefault();
-                    if(schedule != null)
+                    var studentPayment = context.StudentPayment.FirstOrDefault(x => x.ScheduleId.Equals(model.ScheduleId) && x.StudentId.Equals(model.StudentId));
+                    if(studentPayment != null)
                     {
-                        schedule.UpdatedAt = DateTimeOffset.Now;
+                        //studentPayment.UpdatedAt = DateTimeOffset.Now;
                         //if not exist a previous payment
-                        if(schedule.StudentDebit == null)
+                        if(studentPayment == null)
                         {
-                            if (schedule.Students != null && schedule.Students.Count != 0)
-                            {
-                                var clientDebit = CreditRepository.createClientDebit(schedule.Students.First(), model.CreditsAmount);
-                                schedule.StudentDebit = clientDebit;
-                                var invoice = InvoiceRepository.createInvoiceForClientDebit(model.CreditsAmount);
-                                schedule.StudentDebit.Balance.Invoices.Add(invoice);
-                            }
+                            studentPayment = CreditRepository.createStudentPayment(model.ScheduleId, model.StudentId, model.CreditsAmount);
+                            var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
+                            studentPayment.Credit.Invoices.Add(invoice);
                         }
                         else
                         {
-                            var clientDebit = context.ClientDebit.Where(x => x.Id.Equals(schedule.Id)).Include("Balance").FirstOrDefault();
-                            if(clientDebit != null && clientDebit.Balance != null)
+                            if(studentPayment != null && studentPayment.Credit != null)
                             {
-                                var balance = context.Credit.Where(x => x.Id.Equals(clientDebit.Balance.Id)).Include("Invoices").FirstOrDefault();
+                                var balance = context.Credit.Where(x => x.Id.Equals(studentPayment.Credit.Id)).Include(INVOICES).FirstOrDefault();
                                 if(balance != null)
                                 {
                                     balance.Amount += model.CreditsAmount;
-                                    var invoice = InvoiceRepository.createInvoiceForClientDebit(model.CreditsAmount);
+                                    var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
                                     balance.Invoices.Add(invoice);
                                 }
                             }
                         }
                         context.SaveChanges();
-                        return schedule;
+                        return studentPayment;
                     }
-                    return null;
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR); ;
                 }
             }
             catch (Exception ex)

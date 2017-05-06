@@ -16,6 +16,7 @@ namespace YoCoachServer.Models
         public Schedule()
         {
             Students = new List<Student>();
+            StudentPayments = new List<StudentPayment>();
         }
 
         public String Id { get; set; }
@@ -56,7 +57,8 @@ namespace YoCoachServer.Models
         public virtual Gym Gym { get; set; }
 
         public virtual ICollection<Student> Students { get; set; }
-        
-        public virtual StudentDebit StudentDebit { get; set; }
+
+        [JsonProperty("student_payments")]
+        public virtual ICollection<StudentPayment> StudentPayments { get; set; }
     }
 }

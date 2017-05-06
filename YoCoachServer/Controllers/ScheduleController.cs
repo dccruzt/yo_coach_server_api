@@ -19,7 +19,7 @@ namespace YoCoachServer.Controllers
     public class ScheduleController : BaseApiController
     {
         [HttpPost]
-        public IHttpActionResult MarkAsCompleted(ScheduleTransactionBindingModel model)
+        public IHttpActionResult MarkAsCompleted(MarkScheduleBindingModel model)
         {
             try
             {
@@ -47,28 +47,32 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        public IHttpActionResult ReceivePayment(ScheduleTransactionBindingModel model)
+        [HttpPost]
+        public IHttpActionResult ReceivePayment(PayScheduleBindingModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-                if (CurrentUser != null && CurrentUser.Type.Equals("CO"))
+                var result = ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
+                if (result is Schedule)
                 {
-                    var schedule = ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
-                    if(schedule != null)
-                    {
-                        return Ok(schedule);
-                    }
+                    return Ok(result);
                 }
-                return InternalServerError();
+                else if (result is ErrorResult)
+                {
+                    return Content(HttpStatusCode.BadRequest, result);
+                }
+                return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
-                throw;
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
     }

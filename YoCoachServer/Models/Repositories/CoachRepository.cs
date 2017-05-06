@@ -81,7 +81,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include(GYM).Include(STUDENTS).ToList();
+                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include(x => x.Gym.Credit).Include(STUDENTS).ToList();
                     if (date != null)
                     {
                         DateTimeOffset filterDate = DateTimeOffset.Parse(date);
@@ -137,6 +137,7 @@ namespace YoCoachServer.Models.Repositories
                         user = new ApplicationUser()
                         {
                             UserName = studentCoach.PhoneNumber,
+                            Name = studentCoach.Name,
                             Type = STUDENT
                         };
                         var result = await userManager.CreateAsync(user, code);

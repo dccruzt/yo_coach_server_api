@@ -36,7 +36,7 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Credit createCreditForClientDebit(double amount)
+        public static Credit createCreditForStudentPayment(double amount)
         {
             try
             {
@@ -55,16 +55,17 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static StudentDebit createClientDebit(Student client, double amount)
+        public static StudentPayment createStudentPayment(string scheduleId, string studentId, double amount)
         {
             try
             {
-                var clientDebit = new StudentDebit()
+                var studentPayment = new StudentPayment()
                 {
-                    Balance = createCreditForClientDebit(amount),
-                    Client = client
+                    ScheduleId = scheduleId,
+                    StudentId = studentId,
+                    Credit = createCreditForStudentPayment(amount)
                 };
-                return clientDebit;
+                return studentPayment;
             }
             catch (Exception ex)
             {

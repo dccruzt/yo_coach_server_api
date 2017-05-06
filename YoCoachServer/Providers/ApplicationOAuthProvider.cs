@@ -102,7 +102,7 @@ namespace YoCoachServer.Providers
                 { "id", id },
                 { "type", type },
                 { "user_name", userName },
-                { "name", name },
+                { "name", (name == null) ? "" : name },
                 { "email", (email == null) ? "" : email },
                 { "birthday", birthday.ToString() },
                 { "picture", picture }

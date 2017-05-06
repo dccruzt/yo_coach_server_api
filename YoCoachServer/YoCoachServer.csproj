@@ -291,7 +291,7 @@
     <Compile Include="Models\Repositories\ScheduleRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
     <Compile Include="Models\Invoice.cs" />
-    <Compile Include="Models\StudentDebit.cs" />
+    <Compile Include="Models\StudentPayment.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Coach.cs" />

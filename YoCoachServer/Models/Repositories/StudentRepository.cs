@@ -6,6 +6,7 @@ using System.Web;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Enums;
 using YoCoachServer.Models.ViewModels;
+using YoCoachServer.Utils;
 
 namespace YoCoachServer.Models.Repositories
 {
@@ -39,13 +40,36 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static List<Schedule> ListSchedules(string coachId)
+        public static List<Schedule> ListSchedules(String studentId, String coachId, String date)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.Coach.Id.Equals(coachId)).Include("Gym").ToList();
+                    var schedules = context.StudentSchedule.Where(x => x.StudentId.Equals(studentId)).Select(x => x.Schedule).Where(x => x.CoachId.Equals(coachId)).ToList();
+                    if (date != null)
+                    {
+                        DateTimeOffset filterDate = DateTimeOffset.Parse(date);
+                        var schedulesByDay = new List<Schedule>();
+                        foreach (var schedule in schedules)
+                        {
+                            DateTimeOffset dateStart = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
+                            if (DateUtils.SameDate(dateStart, filterDate))
+                            {
+                                schedulesByDay.Add(schedule);
+                            }
+                        }
+                        schedules = schedulesByDay;
+                    }
+
+                    var schedulesWithStudent = new List<Schedule>();
+                    foreach (var schedule in schedules)
+                    {
+                        var scheduleWithStudent = schedule;
+                        scheduleWithStudent = StudentRepository.FillStudentViewModel(scheduleWithStudent);
+                        schedulesWithStudent.Add(scheduleWithStudent);
+                    }
+                    schedules = schedulesWithStudent;
                     return schedules;
                 }
             }
@@ -117,27 +141,31 @@ namespace YoCoachServer.Models.Repositories
         {
             try
             {
-                var students = schedule.StudentSchedules.Select(x => x.Student).ToList();
-                var studentsViewMdodel = new List<StudentViewModel>();
-                foreach(var student in students)
+                using(var context = new YoCoachServerContext())
                 {
-                    StudentViewModel viewModel = new StudentViewModel()
+                    var students = schedule.StudentSchedules.Select(x => x.Student).ToList();
+                    var studentsViewMdodel = new List<StudentViewModel>();
+                    foreach (var student in students)
                     {
-                        Id = student.Id,
-                        Name = student.User.Name,
-                        Type = student.User.Type,
-                        Picture = student.User.Picture,
-                        Birthday = student.User.Birthday,
-                        Email = student.User.Email,
-                        UserName = student.User.UserName,
-                        CreatedAt = student.CreatedAt,
-                        UpdatedAt = student.UpdatedAt,
-                    };
-                    studentsViewMdodel.Add(viewModel);
-                }
-                schedule.StudentsViewModel = studentsViewMdodel;
+                        var studentCoach = context.StudentCoach.FirstOrDefault(x => x.CoachId.Equals(schedule.CoachId) && x.StudentId.Equals(student.Id));
+                        StudentViewModel viewModel = new StudentViewModel()
+                        {
+                            Id = studentCoach.StudentId,
+                            Name = studentCoach.Name,
+                            StudentType = studentCoach.StudentType,
+                            Picture = student.User.Picture,
+                            Birthday = studentCoach.Birthday,
+                            Email = studentCoach.Email,
+                            UserName = studentCoach.PhoneNumber,
+                            CreatedAt = studentCoach.CreatedAt,
+                            UpdatedAt = studentCoach.UpdatedAt,
+                        };
+                        studentsViewMdodel.Add(viewModel);
+                    }
+                    schedule.StudentsViewModel = studentsViewMdodel;
 
-                return schedule;
+                    return schedule;
+                }
             }
             catch (Exception ex)
             {

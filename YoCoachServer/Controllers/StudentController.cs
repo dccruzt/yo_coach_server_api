@@ -31,20 +31,17 @@ namespace YoCoachServer.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult ListSchedules(String date = null)
+        public IHttpActionResult ListSchedules([FromUri(Name = "coach_id")]String coachId = null, String date = null)
         {
             try
             {
-                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
-                {
-                    var schedules = StudentRepository.ListSchedules(date);
-                    return Ok(schedules);
-                }
-                return BadRequest();
+                var schedules = StudentRepository.ListSchedules(CurrentUser.Id, coachId, date);
+                return Ok(schedules);
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 

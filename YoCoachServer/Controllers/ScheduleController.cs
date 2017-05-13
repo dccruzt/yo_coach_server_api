@@ -71,5 +71,21 @@ namespace YoCoachServer.Controllers
                     new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
+
+        [HttpPut]
+        public IHttpActionResult Put(string id)
+        {
+            try
+            {
+
+                return Content(HttpStatusCode.BadRequest,
+                        new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using YoCoachServer.Models.ViewModels;
 
 namespace YoCoachServer.Models
 {
@@ -123,6 +124,8 @@ namespace YoCoachServer.Models
 
             modelBuilder.Entity<IdentityRole>().ToTable("Rol");
             modelBuilder.Entity<IdentityUserRole>().ToTable("UserRol").HasKey(x => new { x.RoleId, x.UserId });
+
+            modelBuilder.Ignore<StudentViewModel>();
 
             //modelBuilder.Ignore<IdentityUserLogin>();
             //modelBuilder.Ignore<IdentityUserClaim>();

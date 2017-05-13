@@ -87,12 +87,10 @@ namespace YoCoachServer.Models.Repositories
                         var schedulesByDay = new List<Schedule>();
                         foreach (var schedule in schedules)
                         {
-                            var scheduleWithStudent = schedule;
                             DateTimeOffset dateStart = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
                             if (DateUtils.SameDate(dateStart, filterDate))
                             {
-                                scheduleWithStudent = StudentRepository.FillStudentViewModel(scheduleWithStudent);
-                                schedulesByDay.Add(scheduleWithStudent);
+                                schedulesByDay.Add(schedule);
                             }
                         }
                         schedules = schedulesByDay;
@@ -101,6 +99,15 @@ namespace YoCoachServer.Models.Repositories
                     {
                         schedules = schedules.Where(x => x.ScheduleState.Equals(scheduleState)).ToList();
                     }
+
+                    var schedulesWithStudent = new List<Schedule>();
+                    foreach (var schedule in schedules)
+                    {
+                        var scheduleWithStudent = schedule;
+                        scheduleWithStudent = StudentRepository.FillStudentViewModel(scheduleWithStudent);
+                        schedulesWithStudent.Add(scheduleWithStudent);
+                    }
+                    schedules = schedulesWithStudent;
                     return schedules;
                 }
             }

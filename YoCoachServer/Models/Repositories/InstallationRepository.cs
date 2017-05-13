@@ -41,16 +41,16 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static List<Installation> getInstallations(List<Student> users)
+        public static List<Installation> getInstallations(List<StudentSchedule> studentSchedules)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
                     var installations = new List<Installation>();
-                    foreach(Student user in users)
+                    foreach(StudentSchedule studentSchedule in studentSchedules)
                     {
-                        var installationsByUser = context.Installation.Where(x => x.UserId.Equals(user.Id)).ToList();
+                        var installationsByUser = context.Installation.Where(x => x.UserId.Equals(studentSchedule.StudentId)).ToList();
                         installations.AddRange(installationsByUser);
                     }
                     return installations;

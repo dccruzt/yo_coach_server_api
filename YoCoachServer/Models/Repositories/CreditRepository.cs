@@ -55,11 +55,11 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static StudentPayment createStudentPayment(string scheduleId, string studentId, double amount)
+        public static StudentSchedule createStudentPayment(string scheduleId, string studentId, double amount)
         {
             try
             {
-                var studentPayment = new StudentPayment()
+                var studentPayment = new StudentSchedule()
                 {
                     ScheduleId = scheduleId,
                     StudentId = studentId,

@@ -13,6 +13,7 @@ namespace YoCoachServer.Models.Enums
 
     public enum ScheduleState
     {
+        PENDING,
         SCHEDULED,
         CANCELED,
         MISSED,

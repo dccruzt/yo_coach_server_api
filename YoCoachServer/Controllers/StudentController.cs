@@ -5,28 +5,28 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using YoCoachServer.Helpers;
+using YoCoachServer.Models;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Repositories;
 
 namespace YoCoachServer.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = STUDENT)]
     public class StudentController : BaseApiController
     {
+        [HttpGet]
         public IHttpActionResult ListCoaches()
         {
             try
             {
-                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
-                {
-                    var coaches = StudentRepository.ListCoaches(CurrentUser.Id);
-                    return Ok(coaches);
-                }
-                return BadRequest();
+                var coaches = StudentRepository.ListCoaches(CurrentUser.Id);
+                return Ok(coaches);
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.InternalServerError,
+                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
             }
         }
 

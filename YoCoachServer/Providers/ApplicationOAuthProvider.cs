@@ -39,6 +39,7 @@ namespace YoCoachServer.Providers
                 {
                     string errorString = JsonHelper.serializeObject(new ErrorResult(ErrorHelper.INVALID_LOGIN, ErrorHelper.INFO_INVALID_LOGIN));
                     //context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    context.SetError(new string(' ', errorString.Length - 12));
                     context.Response.Write(errorString);
                     return;
                 }

@@ -14,6 +14,32 @@ namespace YoCoachServer.Models.Repositories
 {
     public class ScheduleRepository : BaseRepository
     {
+        public static Schedule CreateSchedule(string coachId, SaveScheduleBindingModel model)
+        {
+            try
+            {
+                var schedule = new Schedule()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    CoachId = coachId,
+                    StartTime = model.StartTime,
+                    EndTime = model.EndTime,
+                    TotalValue = model.TotalValue,
+                    GymId = model.GymId,
+                    CreatedAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeOffset.Now,
+                    IsConfirmed = true,
+                    PaymentState = StatePayment.PENDING,
+                    ScheduleState = ScheduleState.SCHEDULED
+                };
+                return schedule;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public static Schedule SaveScheduleByStudent(string clientId, SaveScheduleByClientBindingModel model)
         {
             try
@@ -33,7 +59,7 @@ namespace YoCoachServer.Models.Repositories
                         schedule.CreatedAt = DateTimeOffset.Now;
                         schedule.UpdatedAt = DateTimeOffset.Now;
                         schedule.Coach = coach;
-                        schedule.Students.Add(student);
+                        //schedule.Students.Add(student);
                         schedule.Gym = gym;
                         context.Schedule.Add(schedule);
 
@@ -114,40 +140,31 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Object ReceivePayment(string coachId, PayScheduleBindingModel model)
+        public static StudentSchedule ReceivePayment(string coachId, PayScheduleBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var studentPayment = context.StudentPayment.FirstOrDefault(x => x.ScheduleId.Equals(model.ScheduleId) && x.StudentId.Equals(model.StudentId));
-                    if(studentPayment != null)
+                    var studentPayment = context.StudentSchedule.Where(x => x.ScheduleId.Equals(model.ScheduleId) && x.StudentId.Equals(model.StudentId)).Include(CREDIT).FirstOrDefault();
+
+                    //if not exist a previous payment
+                    if (studentPayment == null)
                     {
-                        //studentPayment.UpdatedAt = DateTimeOffset.Now;
-                        //if not exist a previous payment
-                        if(studentPayment == null)
-                        {
-                            studentPayment = CreditRepository.createStudentPayment(model.ScheduleId, model.StudentId, model.CreditsAmount);
-                            var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
-                            studentPayment.Credit.Invoices.Add(invoice);
-                        }
-                        else
-                        {
-                            if(studentPayment != null && studentPayment.Credit != null)
-                            {
-                                var balance = context.Credit.Where(x => x.Id.Equals(studentPayment.Credit.Id)).Include(INVOICES).FirstOrDefault();
-                                if(balance != null)
-                                {
-                                    balance.Amount += model.CreditsAmount;
-                                    var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
-                                    balance.Invoices.Add(invoice);
-                                }
-                            }
-                        }
+                        studentPayment = CreditRepository.createStudentPayment(model.ScheduleId, model.StudentId, model.CreditsAmount);
+                        var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
+                        studentPayment.Credit.Invoices.Add(invoice);
                         context.SaveChanges();
                         return studentPayment;
                     }
-                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR); ;
+                    else
+                    {
+                        studentPayment.Credit.Amount += model.CreditsAmount;
+                        var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
+                        studentPayment.Credit.Invoices.Add(invoice);
+                        context.SaveChanges();
+                        return studentPayment;
+                    }
                 }
             }
             catch (Exception ex)

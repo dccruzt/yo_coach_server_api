@@ -9,6 +9,7 @@ using System.Web.Http;
 using YoCoachServer.Helpers;
 using YoCoachServer.Models;
 using YoCoachServer.Models.BindingModels;
+using YoCoachServer.Models.Enums;
 using YoCoachServer.Models.Repositories;
 using static YoCoachServer.Models.BindingModels.CoachBindingModels;
 
@@ -18,7 +19,7 @@ namespace YoCoachServer.Controllers
     public class CoachController : BaseApiController
     {
         [HttpPost]
-        public IHttpActionResult SaveSchedule(Schedule schedule)
+        public IHttpActionResult SaveSchedule(SaveScheduleBindingModel model)
         {
             try
             {
@@ -27,7 +28,7 @@ namespace YoCoachServer.Controllers
                     return Content(HttpStatusCode.BadRequest,
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
-                var result = CoachRepository.SaveSchedule(CurrentUser, schedule);
+                var result = CoachRepository.SaveSchedule(CurrentUser, model);
                 if (result is Schedule)
                 {
                     return Ok(result);
@@ -110,7 +111,7 @@ namespace YoCoachServer.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult ListSchedules(String date = null)
+        public IHttpActionResult ListSchedules(String date = null, [FromUri(Name = "schedule_state")]ScheduleState? scheduleState = null)
         {
             try
             {
@@ -120,7 +121,7 @@ namespace YoCoachServer.Controllers
                         new ErrorResult(ErrorHelper.INVALID_URI, ErrorHelper.GetModelErrors(ModelState)));
                 }
 
-                var schedules = CoachRepository.ListSchedules(CurrentUser.Id, date);
+                var schedules = CoachRepository.ListSchedules(CurrentUser.Id, date, scheduleState);
                 return Ok(schedules);
             }
             catch (Exception ex)

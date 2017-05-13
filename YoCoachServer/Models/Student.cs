@@ -13,8 +13,8 @@ namespace YoCoachServer.Models
     {
         public Student()
         {
-            Schedules = new List<Schedule>();
             StudentCoaches = new List<StudentCoach>();
+            StudentSchedules = new List<StudentSchedule>();
         }
 
         [Key, ForeignKey("User")]
@@ -35,8 +35,9 @@ namespace YoCoachServer.Models
         public virtual ApplicationUser User { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Schedule> Schedules { get; set; }
-        [JsonIgnore]
         public virtual ICollection<StudentCoach> StudentCoaches { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<StudentSchedule> StudentSchedules { get; set; }
     }
 }

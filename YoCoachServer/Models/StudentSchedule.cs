@@ -8,7 +8,7 @@ using System.Web;
 
 namespace YoCoachServer.Models
 {
-    public class StudentPayment
+    public class StudentSchedule
     {
         [JsonProperty("schedule_id")]
         [Key, Column(Order = 0)]

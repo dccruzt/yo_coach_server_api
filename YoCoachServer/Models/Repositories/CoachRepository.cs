@@ -17,40 +17,38 @@ namespace YoCoachServer.Models.Repositories
     public class CoachRepository : BaseRepository
     {
 
-        public static Object SaveSchedule(ApplicationUser coach, Schedule schedule)
+        public static Object SaveSchedule(ApplicationUser coach, SaveScheduleBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    schedule.Id = Guid.NewGuid().ToString();
-                    schedule.CoachId = coach.Id;
-                    schedule.CreatedAt = DateTimeOffset.Now;
-                    schedule.UpdatedAt = DateTimeOffset.Now;
-                    schedule.IsConfirmed = true;
-                    schedule.PaymentState = StatePayment.PENDING;
-                    schedule.ScheduleState = ScheduleState.SCHEDULED;
+                    var schedule = ScheduleRepository.CreateSchedule(coach.Id, model);
 
-                    var gym = context.Gym.Find(schedule.GymId);
-                    var existingStudents = new List<Student>();
-                    foreach (var student in schedule.Students)
+                    var gym = context.Gym.Where(x => x.Id.Equals(schedule.GymId)).Include(x => x.Credit).ToList().FirstOrDefault();
+                    var studentSchedules = new List<StudentSchedule>();
+                    foreach (var student in model.Students)
                     {
-                        var existingStudent = context.Student.Find(student.Id);
+                        var existingStudent = context.Student.Where(x => x.Id.Equals(student.Id)).Include(x => x.User).ToList().FirstOrDefault() ;
                         if (existingStudent != null)
                         {
-                            existingStudents.Add(existingStudent);
+                            var studentSchedule = new StudentSchedule()
+                            {
+                                StudentId = existingStudent.Id
+                            };
+                            studentSchedules.Add(studentSchedule);
                         }
                     }
 
-                    if (gym != null && existingStudents.Count > 0)
+                    if (gym != null && studentSchedules.Count > 0)
                     {
                         schedule.Gym = gym;
-                        schedule.Students = existingStudents;
+                        schedule.StudentSchedules = studentSchedules;
                         context.Schedule.Add(schedule);
 
                         context.SaveChanges();
 
-                        var installations = InstallationRepository.getInstallations(schedule.Students.ToList());
+                        var installations = InstallationRepository.getInstallations(studentSchedules);
                         if (installations != null)
                         {
                             foreach (var installation in installations)
@@ -64,6 +62,7 @@ namespace YoCoachServer.Models.Repositories
                                 NotificationHelper.SendNotfication(notification);
                             }
                         }
+                        schedule = StudentRepository.FillStudentViewModel(schedule);
                         return schedule;
                     }
                     return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR);
@@ -75,26 +74,32 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static List<Schedule> ListSchedules(string coachId, String date)
+        public static List<Schedule> ListSchedules(string coachId, String date, ScheduleState? scheduleState)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include(x => x.Gym.Credit).Include(STUDENTS).ToList();
+                    var schedules = context.Schedule.Where(x => x.CoachId.Equals(coachId)).Include(x => x.Gym.Credit).Include(x => x.StudentSchedules.Select(y => y.Student.User)).ToList();
                     if (date != null)
                     {
                         DateTimeOffset filterDate = DateTimeOffset.Parse(date);
                         var schedulesByDay = new List<Schedule>();
                         foreach (var schedule in schedules)
                         {
+                            var scheduleWithStudent = schedule;
                             DateTimeOffset dateStart = (schedule.StartTime.HasValue) ? schedule.StartTime.Value : new DateTimeOffset();
                             if (DateUtils.SameDate(dateStart, filterDate))
                             {
-                                schedulesByDay.Add(schedule);
+                                scheduleWithStudent = StudentRepository.FillStudentViewModel(scheduleWithStudent);
+                                schedulesByDay.Add(scheduleWithStudent);
                             }
                         }
-                        return schedulesByDay;
+                        schedules = schedulesByDay;
+                    }
+                    if(scheduleState != null)
+                    {
+                        schedules = schedules.Where(x => x.ScheduleState.Equals(scheduleState)).ToList();
                     }
                     return schedules;
                 }
@@ -137,7 +142,6 @@ namespace YoCoachServer.Models.Repositories
                         user = new ApplicationUser()
                         {
                             UserName = studentCoach.PhoneNumber,
-                            Name = studentCoach.Name,
                             Type = STUDENT
                         };
                         var result = await userManager.CreateAsync(user, code);

@@ -102,7 +102,7 @@ namespace YoCoachServer.Models
         public DbSet<Credit> Credit { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<StudentCoach> StudentCoach { get; set; }
-        public DbSet<StudentPayment> StudentPayment { get; set; }
+        public DbSet<StudentSchedule> StudentSchedule { get; set; }
         public DbSet<Installation> Installation { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -110,7 +110,7 @@ namespace YoCoachServer.Models
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             //modelBuilder.Entity<Credit>().HasRequired(m => m.Gym).WithOptional(m => m.Credit);
-            //modelBuilder.Entity<StudentPayment>().HasRequired(m => m.Schedule).WithOptional(m => m.StudentPayment);
+            //modelBuilder.Entity<StudentSchedule>().HasRequired(m => m.Schedule).WithOptional(m => m.StudentSchedule);
 
             modelBuilder.Entity<ApplicationUser>().ToTable("User")
                 .Ignore(c => c.EmailConfirmed)

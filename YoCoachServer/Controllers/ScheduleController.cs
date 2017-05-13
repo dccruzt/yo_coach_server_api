@@ -58,13 +58,9 @@ namespace YoCoachServer.Controllers
                         new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
                 }
                 var result = ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
-                if (result is Schedule)
+                if (result is StudentSchedule)
                 {
                     return Ok(result);
-                }
-                else if (result is ErrorResult)
-                {
-                    return Content(HttpStatusCode.BadRequest, result);
                 }
                 return Content(HttpStatusCode.BadRequest,
                         new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));

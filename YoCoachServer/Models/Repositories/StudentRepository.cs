@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using YoCoachServer.Models.BindingModels;
 using YoCoachServer.Models.Enums;
+using YoCoachServer.Models.ViewModels;
 
 namespace YoCoachServer.Models.Repositories
 {
@@ -60,7 +61,7 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedules = context.Schedule.Where(x => x.Students.FirstOrDefault().Id.Equals(model.StudentId) && x.Coach.Id.Equals(coachId)).ToList();
+                    var schedules = context.Schedule.Where(x => x.StudentSchedules.FirstOrDefault().StudentId.Equals(model.StudentId) && x.Coach.Id.Equals(coachId)).ToList();
                     double? notConfirmedAmount = 0;
                     double? confirmedAmount = 0;
                     double? creditsPreQuantity = 0;
@@ -105,6 +106,38 @@ namespace YoCoachServer.Models.Repositories
                     };
                     return valueModel;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Schedule FillStudentViewModel(Schedule schedule)
+        {
+            try
+            {
+                var students = schedule.StudentSchedules.Select(x => x.Student).ToList();
+                var studentsViewMdodel = new List<StudentViewModel>();
+                foreach(var student in students)
+                {
+                    StudentViewModel viewModel = new StudentViewModel()
+                    {
+                        Id = student.Id,
+                        Name = student.User.Name,
+                        Type = student.User.Type,
+                        Picture = student.User.Picture,
+                        Birthday = student.User.Birthday,
+                        Email = student.User.Email,
+                        UserName = student.User.UserName,
+                        CreatedAt = student.CreatedAt,
+                        UpdatedAt = student.UpdatedAt,
+                    };
+                    studentsViewMdodel.Add(viewModel);
+                }
+                schedule.StudentsViewModel = studentsViewMdodel;
+
+                return schedule;
             }
             catch (Exception ex)
             {

@@ -46,5 +46,26 @@ namespace YoCoachServer.Models.Repositories
                 throw;
             }
         }
+
+        public static List<Invoice> ListInvoices(String scheduleId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var invoices = context.Invoice.ToList();
+                    if (scheduleId != null)
+                    {
+                        var invoicesBySchedule = context.Schedule.Where(x => x.Id.Equals(scheduleId)).SelectMany(x => x.Gym.Credit.Invoices).ToList();
+                        invoices = invoicesBySchedule;
+                    }
+                    return invoices;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

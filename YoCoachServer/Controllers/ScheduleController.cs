@@ -19,7 +19,7 @@ namespace YoCoachServer.Controllers
     [Authorize(Roles = COACH_STUDENT)]
     public class ScheduleController : BaseApiController
     {
-        [HttpPost]
+        [Route("api/schedule/")]
         public IHttpActionResult Post(SaveScheduleBindingModel model)
         {
             try

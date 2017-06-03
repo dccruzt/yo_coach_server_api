@@ -15,6 +15,23 @@ namespace YoCoachServer.Controllers
     [Authorize(Roles = STUDENT)]
     public class StudentController : BaseApiController
     {
+        public IHttpActionResult SaveSchedule(SaveScheduleByClientBindingModel model)
+        {
+            try
+            {
+                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
+                {
+                    var schedule = ScheduleRepository.SaveScheduleByStudent(CurrentUser.Id, model);
+                    return Ok(schedule);
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         [HttpGet]
         public IHttpActionResult ListCoaches()
         {
@@ -42,23 +59,6 @@ namespace YoCoachServer.Controllers
             {
                 return Content(HttpStatusCode.InternalServerError,
                     new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
-            }
-        }
-
-        public IHttpActionResult SaveSchedule(SaveScheduleByClientBindingModel model)
-        {
-            try
-            {
-                if (CurrentUser.Id != null && CurrentUser.Type.Equals("CL"))
-                {
-                    var schedule = ScheduleRepository.SaveScheduleByStudent(CurrentUser.Id, model);
-                    return Ok(schedule);
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
             }
         }
 

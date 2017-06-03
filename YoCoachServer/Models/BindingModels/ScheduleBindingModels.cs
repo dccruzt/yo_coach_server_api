@@ -11,7 +11,7 @@ namespace YoCoachServer.Models.BindingModels
     public class SaveScheduleBindingModel
     {
         [Required]
-        [JsonProperty("Coach_Id")]
+        [JsonProperty("coach_id")]
         public virtual String CoachId { get; set; }
 
         [Required]

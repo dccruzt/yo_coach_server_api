@@ -14,21 +14,16 @@ namespace YoCoachServer.Models.Repositories
 {
     public class ScheduleRepository : BaseRepository
     {
-        public static Object SaveSchedule(ApplicationUser coach, SaveScheduleBindingModel model)
+        public static Object SaveSchedule(ApplicationUser user, SaveScheduleBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
                     var gym = context.Gym.Where(x => x.Id.Equals(model.GymId)).Include(x => x.Credit).ToList().FirstOrDefault();
+                    var isCoach = user.Type.Equals(COACH) ? true : false;
+                    var schedule = ScheduleRepository.CreateSchedule(model, isCoach);
 
-                    if (coach.Type.Equals(COACH))
-                    {
-
-                    }
-                    var schedule = ScheduleRepository.CreateSchedule(coach.Id, model);
-
-                    
                     var studentSchedules = new List<StudentSchedule>();
                     foreach (var student in model.Students)
                     {
@@ -52,14 +47,15 @@ namespace YoCoachServer.Models.Repositories
 
                         context.SaveChanges();
 
-                        var installations = InstallationRepository.getInstallations(studentSchedules);
+                        List<Installation> installations = null;
+                        installations = isCoach ? InstallationRepository.getInstallations(studentSchedules) : InstallationRepository.getInstallations(model.CoachId);
                         if (installations != null)
                         {
                             foreach (var installation in installations)
                             {
                                 var notification = NotificationRepository.CreateNotificationForSaveSchedule(
                                     installation.DeviceToken,
-                                    coach.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    user.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
                                     NotificationMessage.NEW_SCHEDULE_BODY,
                                     NotificationType.SAVE_SCHEDULE);
 
@@ -78,23 +74,23 @@ namespace YoCoachServer.Models.Repositories
             }
         }
 
-        public static Schedule CreateSchedule(string coachId, SaveScheduleBindingModel model)
+        public static Schedule CreateSchedule(SaveScheduleBindingModel model, bool isCoach)
         {
             try
             {
                 var schedule = new Schedule()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    CoachId = coachId,
+                    CoachId = model.CoachId,
                     StartTime = model.StartTime,
                     EndTime = model.EndTime,
                     TotalValue = model.TotalValue,
                     GymId = model.GymId,
                     CreatedAt = DateTimeOffset.Now,
                     UpdatedAt = DateTimeOffset.Now,
-                    IsConfirmed = true,
+                    IsConfirmed = isCoach ? true : false,
                     PaymentState = StatePayment.PENDING,
-                    ScheduleState = ScheduleState.SCHEDULED
+                    ScheduleState = isCoach ? ScheduleState.SCHEDULED : ScheduleState.PENDING
                 };
                 return schedule;
             }

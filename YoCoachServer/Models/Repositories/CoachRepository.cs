@@ -17,13 +17,13 @@ namespace YoCoachServer.Models.Repositories
     public class CoachRepository : BaseRepository
     {
 
-        public static Object SaveSchedule(ApplicationUser coach, SaveScheduleBindingModel model)
+        public static Object SaveSchedule(ApplicationUser user, SaveScheduleBindingModel model)
         {
             try
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var schedule = ScheduleRepository.CreateSchedule(coach.Id, model);
+                    var schedule = ScheduleRepository.CreateSchedule(model, true);
 
                     var gym = context.Gym.Where(x => x.Id.Equals(schedule.GymId)).Include(x => x.Credit).ToList().FirstOrDefault();
                     var studentSchedules = new List<StudentSchedule>();
@@ -55,7 +55,7 @@ namespace YoCoachServer.Models.Repositories
                             {
                                 var notification = NotificationRepository.CreateNotificationForSaveSchedule(
                                     installation.DeviceToken,
-                                    coach.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    user.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
                                     NotificationMessage.NEW_SCHEDULE_BODY,
                                     NotificationType.SAVE_SCHEDULE);
 

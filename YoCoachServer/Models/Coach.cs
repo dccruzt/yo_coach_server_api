@@ -24,6 +24,8 @@ namespace YoCoachServer.Models
         public bool? IsVisibleForClients { get; set; }
         [JsonProperty("has_penality")]
         public bool? HasPenality { get; set; }
+        [JsonProperty("penalty_percent")]
+        public Double? PenalityPercent { get; set; }
 
         public virtual ApplicationUser User { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }

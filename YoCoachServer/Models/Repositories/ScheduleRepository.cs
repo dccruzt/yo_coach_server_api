@@ -14,6 +14,70 @@ namespace YoCoachServer.Models.Repositories
 {
     public class ScheduleRepository : BaseRepository
     {
+        public static Object SaveSchedule(ApplicationUser coach, SaveScheduleBindingModel model)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var gym = context.Gym.Where(x => x.Id.Equals(model.GymId)).Include(x => x.Credit).ToList().FirstOrDefault();
+
+                    if (coach.Type.Equals(COACH))
+                    {
+
+                    }
+                    var schedule = ScheduleRepository.CreateSchedule(coach.Id, model);
+
+                    
+                    var studentSchedules = new List<StudentSchedule>();
+                    foreach (var student in model.Students)
+                    {
+                        var existingStudent = context.Student.Where(x => x.Id.Equals(student.Id)).Include(x => x.User).ToList().FirstOrDefault();
+                        if (existingStudent != null)
+                        {
+                            var studentSchedule = new StudentSchedule()
+                            {
+                                StudentId = existingStudent.Id,
+                                Credit = CreditRepository.createCreditForStudentPayment(0)
+                            };
+                            studentSchedules.Add(studentSchedule);
+                        }
+                    }
+
+                    if (gym != null && studentSchedules.Count > 0)
+                    {
+                        schedule.Gym = gym;
+                        schedule.StudentSchedules = studentSchedules;
+                        context.Schedule.Add(schedule);
+
+                        context.SaveChanges();
+
+                        var installations = InstallationRepository.getInstallations(studentSchedules);
+                        if (installations != null)
+                        {
+                            foreach (var installation in installations)
+                            {
+                                var notification = NotificationRepository.CreateNotificationForSaveSchedule(
+                                    installation.DeviceToken,
+                                    coach.Name + " " + NotificationMessage.NEW_SCHEDULE_TITLE,
+                                    NotificationMessage.NEW_SCHEDULE_BODY,
+                                    NotificationType.SAVE_SCHEDULE);
+
+                                NotificationHelper.SendNotfication(notification);
+                            }
+                        }
+                        schedule = StudentRepository.FillStudentViewModel(schedule);
+                        return schedule;
+                    }
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public static Schedule CreateSchedule(string coachId, SaveScheduleBindingModel model)
         {
             try
@@ -146,25 +210,55 @@ namespace YoCoachServer.Models.Repositories
             {
                 using (var context = new YoCoachServerContext())
                 {
-                    var studentPayment = context.StudentSchedule.Where(x => x.ScheduleId.Equals(model.ScheduleId) && x.StudentId.Equals(model.StudentId)).Include(CREDIT).FirstOrDefault();
+                    var studentSchedule = context.StudentSchedule.Where(x => x.ScheduleId.Equals(model.ScheduleId) && x.StudentId.Equals(model.StudentId)).Include(CREDIT).FirstOrDefault();
 
                     //if not exist a previous payment
-                    if (studentPayment == null)
+                    if (studentSchedule.Credit == null)
                     {
-                        studentPayment = CreditRepository.createStudentPayment(model.ScheduleId, model.StudentId, model.CreditsAmount);
+                        studentSchedule = CreditRepository.createStudentPayment(model.ScheduleId, model.StudentId, model.CreditsAmount);
                         var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
-                        studentPayment.Credit.Invoices.Add(invoice);
+                        studentSchedule.Credit.Invoices.Add(invoice);
                         context.SaveChanges();
-                        return studentPayment;
+                        return studentSchedule;
                     }
                     else
                     {
-                        studentPayment.Credit.Amount += model.CreditsAmount;
+                        studentSchedule.Credit.Amount += model.CreditsAmount;
                         var invoice = InvoiceRepository.createInvoiceForStudentPayment(model.CreditsAmount);
-                        studentPayment.Credit.Invoices.Add(invoice);
+                        studentSchedule.Credit.Invoices.Add(invoice);
                         context.SaveChanges();
-                        return studentPayment;
+                        return studentSchedule;
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static Object UpdateSchedule(String id, Schedule schedule, String coachId)
+        {
+            try
+            {
+                using (var context = new YoCoachServerContext())
+                {
+                    var existingSchedule = context.Schedule.Find(id);
+                    var coach = context.Coach.Find(coachId);
+                    if(existingSchedule != null && coach != null)
+                    {
+                        if(schedule.ScheduleState != null)
+                        {
+                            if (schedule.ScheduleState.Equals(ScheduleState.MISSED) && coach.PenalityPercent != null)
+                            {
+                                existingSchedule.TotalValue = existingSchedule.TotalValue * coach.PenalityPercent;
+                            }
+                            existingSchedule.ScheduleState = schedule.ScheduleState;
+                            context.SaveChanges();
+                            return schedule;
+                        }
+                    }
+                    return new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR);
                 }
             }
             catch (Exception ex)

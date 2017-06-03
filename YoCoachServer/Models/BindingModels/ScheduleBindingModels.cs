@@ -11,6 +11,13 @@ namespace YoCoachServer.Models.BindingModels
     public class SaveScheduleBindingModel
     {
         [Required]
+        [JsonProperty("Coach_Id")]
+        public virtual String CoachId { get; set; }
+
+        [Required]
+        public virtual List<Student> Students { get; set; }
+
+        [Required]
         [JsonProperty("start_time")]
         [CheckDateRange(ErrorMessage = "Value for StartTime must be greater than today.")]
         public DateTimeOffset? StartTime { get; set; }
@@ -22,14 +29,11 @@ namespace YoCoachServer.Models.BindingModels
         [Required]
         [JsonProperty("total_value")]
         [Range(10, 1000, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-        public double? TotalValue { get; set; }
+        public Double? TotalValue { get; set; }
 
         [Required]
         [JsonProperty("gym_id")]
-        public string GymId { get; set; }
-
-        [Required]
-        public virtual List<Student> Students { get; set; }
+        public String GymId { get; set; }
     }
 
     public class SaveScheduleByClientBindingModel

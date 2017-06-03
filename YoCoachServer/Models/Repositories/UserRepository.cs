@@ -54,6 +54,7 @@ namespace YoCoachServer.Models.Repositories
                     IsVisibleForClients = true,
                     TimeToCancel = 0,
                     HasPenality = false,
+                    PenalityPercent = 0,
                     CreatedAt = DateTimeOffset.Now,
                     UpdatedAt = DateTimeOffset.Now
                 };

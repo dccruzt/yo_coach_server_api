@@ -78,31 +78,6 @@ namespace YoCoachServer.Controllers
             }
         }
 
-        [HttpPost]
-        public IHttpActionResult ReceivePayment(PayScheduleBindingModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return Content(HttpStatusCode.BadRequest,
-                        new ErrorResult(ErrorHelper.INVALID_BODY, ErrorHelper.GetModelErrors(ModelState)));
-                }
-                var result = ScheduleRepository.ReceivePayment(CurrentUser.Id, model);
-                if (result is StudentSchedule)
-                {
-                    return Ok(result);
-                }
-                return Content(HttpStatusCode.BadRequest,
-                        new ErrorResult(ErrorHelper.DATABASE_ERROR, ErrorHelper.INFO_DATABASE_ERROR));
-            }
-            catch (Exception ex)
-            {
-                return Content(HttpStatusCode.InternalServerError,
-                    new ErrorResult(ErrorHelper.EXCEPTION, ex.StackTrace));
-            }
-        }
-
         [Route("api/schedule/{id}")]
         public IHttpActionResult Put(String id, Schedule schedule)
         {

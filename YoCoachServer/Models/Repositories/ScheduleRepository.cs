@@ -249,11 +249,12 @@ namespace YoCoachServer.Models.Repositories
                     {
                         if(schedule.ScheduleState != null)
                         {
-                            if (schedule.ScheduleState.Equals(ScheduleState.MISSED) && coach.PenalityPercent != null)
+                            if (schedule.ScheduleState.Equals(ScheduleState.MISSED) && coach.HasPenality.Value && coach.PenalityPercent != null)
                             {
                                 existingSchedule.TotalValue = existingSchedule.TotalValue * coach.PenalityPercent;
                             }
                             existingSchedule.ScheduleState = schedule.ScheduleState;
+                            existingSchedule.UpdatedAt = DateTimeOffset.Now;
                             context.SaveChanges();
                             return schedule;
                         }
